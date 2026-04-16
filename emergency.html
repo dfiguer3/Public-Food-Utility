@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Emergency • Public Food Utility</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./script.js"></script>
+  </head>
+  <body class="app">
+    <main class="screen" data-screen="emergency">
+      <div class="phone" role="application" aria-label="Emergency">
+        <div class="phone-bg" aria-hidden="true"></div>
+        <header class="topbar">
+          <a class="icon-btn" href="index.html" aria-label="Back">
+            <span class="icon icon-back" aria-hidden="true"></span>
+          </a>
+          <button class="icon-btn" type="button" data-modal="menu" aria-label="Menu">
+            <span class="icon icon-dots" aria-hidden="true"></span>
+          </button>
+        </header>
+
+        <section class="content">
+          <div class="emergency-icon" aria-hidden="true"></div>
+          <div class="sheet sheet-emergency" aria-label="Emergency content">
+            <h1 class="page-title">Emergency</h1>
+            <p class="muted">
+              If you are in immediate danger, call <strong>911</strong>.
+            </p>
+            <div class="emergency-actions">
+              <a class="btn btn-primary" href="tel:911">Call 911</a>
+              <a class="btn" href="mailto:help@example.com">Email help</a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <dialog class="modal" data-modal-root="menu" aria-label="Menu">
+      <form method="dialog" class="modal-backdrop">
+        <div class="modal-sheet" role="document">
+          <div class="modal-head">
+            <div class="modal-title">Menu</div>
+            <button class="icon-btn" value="cancel" aria-label="Close">
+              <span class="icon icon-x" aria-hidden="true"></span>
+            </button>
+          </div>
+          <nav class="modal-nav" aria-label="Menu links">
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="map.html">Map</a>
+            <a href="mailbox.html">Mailbox</a>
+            <a href="snap.html">SNAP</a>
+            <a href="financial.html">Support</a>
+            <a href="profile.html">Profile</a>
+          </nav>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>

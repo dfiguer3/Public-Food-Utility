@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Home • Public Food Utility</title>
+    <meta name="description" content="Public Food Utility — Home" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./script.js"></script>
+  </head>
+  <body class="app">
+    <main class="screen" data-screen="home">
+      <div class="phone" role="application" aria-label="Public Food Utility">
+        <div class="phone-bg" aria-hidden="true"></div>
+
+        <header class="topbar">
+          <button class="icon-btn" type="button" data-modal="menu" aria-label="Menu">
+            <span class="icon icon-dots" aria-hidden="true"></span>
+          </button>
+
+          <a class="avatar" href="profile.html" aria-label="Profile"></a>
+        </header>
+
+        <section class="home-grid" aria-label="Home content">
+          <section class="panel panel-near" aria-label="Near you">
+            <div class="panel-head">
+              <a class="panel-title-link" href="events.html">
+                <span class="panel-title">Near You</span>
+                <span class="icon icon-arrow" aria-hidden="true"></span>
+              </a>
+            </div>
+
+            <a class="near-card near-1" href="event-1.html">
+              <div class="near-card-row">
+                <span class="near-card-title">Knoxville Dream Center</span>
+                <button class="mini-btn" type="button" data-action="toggle-fav" aria-label="Favorite Knoxville Dream Center"></button>
+                <span class="icon icon-share" aria-hidden="true"></span>
+              </div>
+              <ul class="near-card-list">
+                <li>Free meals &amp; groceries</li>
+                <li>Weekly rotating food truck</li>
+              </ul>
+            </a>
+
+            <a class="near-card near-2" href="event-2.html">
+              <div class="near-card-row">
+                <span class="near-card-title">Love Kitchen</span>
+                <button class="mini-btn" type="button" data-action="toggle-fav" aria-label="Favorite Love Kitchen"></button>
+                <span class="icon icon-share" aria-hidden="true"></span>
+              </div>
+              <ul class="near-card-list">
+                <li>Free meals &amp; emergency food packages</li>
+                <li>Hrs vary; best to call prior</li>
+              </ul>
+            </a>
+
+            <a class="near-card near-3" href="event-3.html">
+              <div class="near-card-row">
+                <span class="near-card-title">Fish Hospitality</span>
+                <button class="mini-btn" type="button" data-action="toggle-fav" aria-label="Favorite Fish Hospitality"></button>
+                <span class="icon icon-share" aria-hidden="true"></span>
+              </div>
+              <ul class="near-card-list">
+                <li>Grocery distribution</li>
+                <li>Kid BOOST food bags</li>
+                <li>Dependent on location</li>
+              </ul>
+            </a>
+
+            <a class="near-card near-4" href="events.html">
+              <div class="near-card-row">
+                <span class="near-card-title">Knox Needs</span>
+                <button class="mini-btn" type="button" data-action="toggle-fav" aria-label="Favorite Knox Needs"></button>
+                <span class="icon icon-share" aria-hidden="true"></span>
+              </div>
+              <ul class="near-card-list">
+                <li>No cook ready to eat meals</li>
+                <li>Everyday 4–4:30pm</li>
+              </ul>
+            </a>
+          </section>
+
+          <section class="home-right" aria-label="Support and SNAP">
+            <section class="seg seg-home" aria-label="Quick actions">
+              <a class="seg-pill is-active" href="snap.html" aria-label="SNAP">
+                <span class="icon icon-mail" aria-hidden="true"></span>
+              </a>
+              <a class="seg-pill" href="mailbox.html" aria-label="Mailbox">
+                <span class="icon icon-mail" aria-hidden="true"></span>
+              </a>
+              <a class="seg-pill" href="emergency.html" aria-label="Emergency">
+                <span class="icon icon-alert" aria-hidden="true"></span>
+              </a>
+            </section>
+
+            <section class="panel panel-support" aria-label="Support">
+              <div class="panel-head">
+                <a class="panel-title-link" href="financial.html">
+                  <span class="panel-title">Support</span>
+                  <span class="icon icon-arrow" aria-hidden="true"></span>
+                </a>
+              </div>
+              <div class="support-bubbles" aria-hidden="true">
+                <div class="bubble b1"></div>
+                <div class="bubble b2"></div>
+                <div class="bubble b3"></div>
+                <div class="bubble b4"></div>
+              </div>
+            </section>
+
+            <a class="snap-card" href="snap.html" aria-label="Go to SNAP">
+              <div class="snap-card-img" aria-hidden="true"></div>
+            </a>
+          </section>
+        </section>
+
+        <a class="map-preview" href="map.html" aria-label="Map">
+          <div class="map-preview-pin" aria-hidden="true"></div>
+        </a>
+      </div>
+    </main>
+
+    <dialog class="modal" data-modal-root="menu" aria-label="Menu">
+      <form method="dialog" class="modal-backdrop">
+        <div class="modal-sheet" role="document">
+          <div class="modal-head">
+            <div class="modal-title">Menu</div>
+            <button class="icon-btn" value="cancel" aria-label="Close">
+              <span class="icon icon-x" aria-hidden="true"></span>
+            </button>
+          </div>
+          <nav class="modal-nav" aria-label="Menu links">
+            <a href="events.html">Events</a>
+            <a href="map.html">Map</a>
+            <a href="mailbox.html">Mailbox</a>
+            <a href="snap.html">SNAP</a>
+            <a href="financial.html">Support</a>
+            <a href="emergency.html">Emergency</a>
+          </nav>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>

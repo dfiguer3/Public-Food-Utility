@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Housing Support • Public Food Utility</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./script.js"></script>
+  </head>
+  <body class="app">
+    <main class="screen" data-screen="housing">
+      <div class="phone" role="application" aria-label="Housing Support">
+        <div class="phone-bg" aria-hidden="true"></div>
+        <header class="topbar">
+          <a class="icon-btn" href="index.html" aria-label="Back">
+            <span class="icon icon-back" aria-hidden="true"></span>
+          </a>
+          <button class="icon-btn" type="button" data-modal="menu" aria-label="Menu">
+            <span class="icon icon-dots" aria-hidden="true"></span>
+          </button>
+        </header>
+
+        <section class="content">
+          <nav class="seg seg-support" aria-label="Support categories">
+            <a class="seg-pill" href="financial.html">
+              <span class="icon icon-dollar" aria-hidden="true"></span>
+            </a>
+            <a class="seg-pill" href="nutrition.html">
+              <span class="icon icon-people" aria-hidden="true"></span>
+            </a>
+            <a class="seg-pill is-active" href="housing.html" aria-current="page">
+              <span class="icon icon-house" aria-hidden="true"></span>
+            </a>
+          </nav>
+
+          <div class="sheet sheet-support" aria-label="Housing Support list">
+            <h1 class="page-title page-title-icon">
+              <span class="icon icon-house badge" aria-hidden="true"></span>
+              Housing Support
+            </h1>
+
+            <article class="support-card">
+              <a class="support-link" href="blank.html">Knox Area Rescue Ministries (KARM)</a>
+              <ul>
+                <li>24/7 emergency shelter</li>
+                <li>Meals</li>
+                <li>Case management</li>
+                <li>Transitional programs</li>
+              </ul>
+            </article>
+
+            <article class="support-card">
+              <a class="support-link" href="blank.html">Knox County Housing Authority</a>
+              <ul>
+                <li>Provides safe, affordable housing</li>
+                <li>Related services for low‑income individuals and families</li>
+              </ul>
+            </article>
+
+            <article class="support-card">
+              <a class="support-link" href="blank.html">Knoxville Leadership Foundation “Operation Backyard”</a>
+              <ul>
+                <li>Free home repair services for low‑income, elderly, and disabled homeowners</li>
+              </ul>
+            </article>
+
+            <article class="support-card">
+              <a class="support-link" href="blank.html">Knoxville Area Urban League</a>
+              <ul>
+                <li>Housing assistance</li>
+                <li>Financial education</li>
+                <li>Homeownership support</li>
+              </ul>
+            </article>
+
+            <article class="support-card">
+              <a class="support-link" href="blank.html">Family Promise of Knoxville</a>
+              <ul>
+                <li>Temporary housing, meals, and support services to help families achieve sustainable independence</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <dialog class="modal" data-modal-root="menu" aria-label="Menu">
+      <form method="dialog" class="modal-backdrop">
+        <div class="modal-sheet" role="document">
+          <div class="modal-head">
+            <div class="modal-title">Menu</div>
+            <button class="icon-btn" value="cancel" aria-label="Close">
+              <span class="icon icon-x" aria-hidden="true"></span>
+            </button>
+          </div>
+          <nav class="modal-nav" aria-label="Menu links">
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="map.html">Map</a>
+            <a href="mailbox.html">Mailbox</a>
+            <a href="snap.html">SNAP</a>
+            <a href="emergency.html">Emergency</a>
+            <a href="profile.html">Profile</a>
+          </nav>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>
