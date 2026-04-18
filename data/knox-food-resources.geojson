@@ -1,0 +1,65 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "knoxville-dream-center",
+      "geometry": { "type": "Point", "coordinates": [-83.979476, 35.940752] },
+      "properties": {
+        "id": "knoxville-dream-center",
+        "name": "Knoxville Dream Center",
+        "address": "4320 Old Kingston Pike, Knoxville, TN 37919",
+        "hours": "Verify hours and services before visiting.",
+        "kind": "Community meals & groceries"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "love-kitchen",
+      "geometry": { "type": "Point", "coordinates": [-83.895177, 35.982025] },
+      "properties": {
+        "id": "love-kitchen",
+        "name": "Love Kitchen",
+        "address": "2419 Martin Luther King Jr Ave, Knoxville, TN 37915",
+        "hours": "Hours vary; call ahead when possible.",
+        "kind": "Free meals & emergency food"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "second-harvest-east-tn",
+      "geometry": { "type": "Point", "coordinates": [-84.111717, 35.907566] },
+      "properties": {
+        "id": "second-harvest-east-tn",
+        "name": "Second Harvest Food Bank of East Tennessee",
+        "address": "136 Perimeter Park Rd, Knoxville, TN 37922",
+        "hours": "Distribution partners; check their schedule.",
+        "kind": "Regional food bank"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "fish-hospitality-chestnut",
+      "geometry": { "type": "Point", "coordinates": [-83.89066551, 35.98083435] },
+      "properties": {
+        "id": "fish-hospitality-chestnut",
+        "name": "Fish Hospitality Pantries",
+        "address": "600 S Chestnut St, Knoxville, TN 37914",
+        "hours": "Verify pantry hours by location.",
+        "kind": "Food pantry network"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "fish-hospitality-northwest",
+      "geometry": { "type": "Point", "coordinates": [-83.931611, 35.982364] },
+      "properties": {
+        "id": "fish-hospitality-northwest",
+        "name": "Northwest Fish Hospitality Pantries",
+        "address": "122 W Scott Ave, Knoxville, TN 37917",
+        "hours": "Verify pantry hours before visiting.",
+        "kind": "Food pantry"
+      }
+    }
+  ]
+}

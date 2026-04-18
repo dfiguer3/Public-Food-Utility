@@ -6,6 +6,8 @@
     <title>SNAP • Public Food Utility</title>
     <link rel="stylesheet" href="./styles.css" />
     <script defer src="./script.js"></script>
+    <script defer src="./theme.js"></script>
+    <script defer src="./snap.js"></script>
   </head>
   <body class="app">
     <main class="screen" data-screen="snap">
@@ -21,8 +23,15 @@
         </header>
 
         <section class="content">
-          <div class="snap-hero" aria-hidden="true">
-            <div class="snap-hero-img"></div>
+          <div class="snap-hero" aria-label="EBT card preview">
+            <div class="snap-hero-img" aria-hidden="true"></div>
+            <img
+              id="snap-ebt-card-top"
+              class="snap-ebt-top"
+              src="./assets/ebt-card-1.png"
+              alt="Selected EBT card style"
+              loading="eager"
+            />
           </div>
 
           <div class="sheet sheet-snap" aria-label="Your SNAP">
@@ -37,8 +46,108 @@
 
             <div class="kv">
               <div class="kv-label">Balance</div>
-              <div class="kv-value">$237.54</div>
+              <div class="kv-value" data-snap-metric="balance">$237.54</div>
             </div>
+
+            <section class="snap-info" aria-label="SNAP estimates">
+              <h2 class="snap-info-title">This month at a glance</h2>
+
+              <div class="snap-cards" role="list">
+                <article class="snap-card-info" role="listitem">
+                  <div class="snap-card-body">
+                    <div class="snap-card-title">Estimated monthly benefit</div>
+                    <div class="snap-card-desc">Based on household size and common eligibility ranges.</div>
+                  </div>
+                  <div class="snap-badge" data-snap-metric="monthlyBenefit">$—</div>
+                </article>
+
+                <article class="snap-card-info" role="listitem">
+                  <div class="snap-card-body">
+                    <div class="snap-card-title">Household size</div>
+                    <div class="snap-card-desc">Used to estimate benefits and grocery planning.</div>
+                  </div>
+                  <div class="snap-badge" data-snap-metric="household">—</div>
+                </article>
+
+                <article class="snap-card-info" role="listitem">
+                  <div class="snap-card-body">
+                    <div class="snap-card-title">Next deposit in</div>
+                    <div class="snap-card-desc">Approximate countdown (varies by case schedule).</div>
+                  </div>
+                  <div class="snap-badge" data-snap-metric="nextDeposit">— days</div>
+                </article>
+
+                <article class="snap-card-info" role="listitem">
+                  <div class="snap-card-body">
+                    <div class="snap-card-title">Spend target this week</div>
+                    <div class="snap-card-desc">A simple pacing suggestion to stretch benefits.</div>
+                  </div>
+                  <div class="snap-badge" data-snap-metric="weeklyTarget">$—</div>
+                </article>
+              </div>
+            </section>
+
+            <section class="snap-info" aria-label="EBT card customization">
+              <h2 class="snap-info-title">Your EBT card</h2>
+
+              <div class="snap-card-custom">
+                <img
+                  id="snap-ebt-card"
+                  class="snap-ebt-img"
+                  src="./assets/ebt-card-1.png"
+                  alt="Your EBT card style preview"
+                  loading="lazy"
+                />
+                <div class="snap-card-custom-actions">
+                  <button
+                    type="button"
+                    class="snap-confirm-btn"
+                    id="snap-confirm-card"
+                    aria-label="Confirm this card style"
+                  >
+                    Confirm
+                  </button>
+                  <button type="button" class="snap-custom-btn" data-card-theme="prev" aria-label="Previous card style">
+                    Prev
+                  </button>
+                  <button type="button" class="snap-custom-btn" data-card-theme="next" aria-label="Next card style">
+                    Next
+                  </button>
+                </div>
+                <div class="snap-card-custom-note muted">
+                  This only changes the look of your card in the app (demo). It does not change your real EBT card.
+                </div>
+              </div>
+            </section>
+
+            <section class="snap-info" aria-label="Recent purchases">
+              <h2 class="snap-info-title">Past purchases</h2>
+              <div class="snap-purchases" role="list" aria-label="Recent purchases list">
+                <div class="snap-row" role="listitem">
+                  <div class="snap-row-main">
+                    <div class="snap-row-title">Grocery store</div>
+                    <div class="snap-row-sub">—</div>
+                  </div>
+                  <div class="snap-row-value">$—</div>
+                </div>
+              </div>
+            </section>
+
+            <section class="snap-info" aria-label="Pay bills">
+              <h2 class="snap-info-title">Pay bills</h2>
+              <div class="snap-bills" role="list" aria-label="Bills list">
+                <div class="snap-row" role="listitem">
+                  <div class="snap-row-main">
+                    <div class="snap-row-title">Utilities</div>
+                    <div class="snap-row-sub">Due —</div>
+                  </div>
+                  <button type="button" class="snap-pay-btn" aria-label="Pay bill">Pay</button>
+                </div>
+              </div>
+              <p class="snap-disclaimer muted">
+                Demo: payment buttons don’t charge anything. They’re here to show how the flow could work.
+              </p>
+            </section>
           </div>
         </section>
       </div>

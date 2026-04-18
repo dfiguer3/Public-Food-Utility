@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Map • Public Food Utility</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
-    <script defer src="./script.js"></script>
   </head>
   <body class="app">
     <main class="screen" data-screen="map">
@@ -21,7 +21,37 @@
         </header>
 
         <section class="content map-canvas" aria-label="Map canvas">
-          <div class="map-blank" aria-hidden="true"></div>
+          <div class="map-page">
+            <p class="map-bbox-note">
+              Map and search are limited to the Knoxville area (approx. Knox County). Places listed are a curated
+              sample—always confirm hours, eligibility, and services before visiting.
+            </p>
+            <form id="map-search-form" class="map-search-form" role="search" aria-label="Search Knoxville address">
+              <input
+                id="map-search-input"
+                name="q"
+                type="search"
+                enterkeyhint="search"
+                placeholder="Search address in Knoxville…"
+                autocomplete="street-address"
+              />
+              <button type="submit" class="map-search-submit">Search</button>
+              <button type="button" id="map-locate-btn" class="map-locate-btn">My location</button>
+            </form>
+            <div id="map-status" class="map-status" role="status" aria-live="polite" hidden></div>
+            <div class="map-split">
+              <div id="map" class="map-gl" role="region" aria-label="Knoxville map"></div>
+              <aside class="map-side" aria-label="Food pantries and food banks">
+                <div class="map-route-panel">
+                  <div id="map-route-summary" class="map-route-summary"></div>
+                  <button type="button" id="map-route-clear" class="map-route-clear" hidden>Clear route</button>
+                  <ol id="map-route-steps" class="map-route-steps"></ol>
+                </div>
+                <div class="map-list-head">Nearby (sorted by distance)</div>
+                <ul id="map-place-list" class="map-place-list" role="listbox" aria-label="Location list"></ul>
+              </aside>
+            </div>
+          </div>
         </section>
       </div>
     </main>
@@ -38,6 +68,7 @@
           <nav class="modal-nav" aria-label="Menu links">
             <a href="index.html">Home</a>
             <a href="events.html">Events</a>
+            <a href="map.html">Map</a>
             <a href="mailbox.html">Mailbox</a>
             <a href="snap.html">SNAP</a>
             <a href="financial.html">Support</a>
@@ -47,5 +78,13 @@
         </div>
       </form>
     </dialog>
+
+    <script>
+      window.MAPBOX_ACCESS_TOKEN = window.MAPBOX_ACCESS_TOKEN || "";
+    </script>
+    <script src="./map-config.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js"></script>
+    <script defer src="./script.js"></script>
+    <script defer src="./map.js"></script>
   </body>
 </html>
