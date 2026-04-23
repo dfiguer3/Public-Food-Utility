@@ -58,6 +58,14 @@
   const routeStepsEl = $("#map-route-steps");
   const routeClearBtn = $("#map-route-clear");
 
+  // Deep link support from Home cards: map.html?destLng=...&destLat=...&destName=...
+  const urlParams = new URLSearchParams(window.location.search || "");
+  const deepDestLng = Number(urlParams.get("destLng"));
+  const deepDestLat = Number(urlParams.get("destLat"));
+  const deepDestName = urlParams.get("destName") || "";
+  const deepDestLngLat =
+    Number.isFinite(deepDestLng) && Number.isFinite(deepDestLat) ? [deepDestLng, deepDestLat] : null;
+
   if (typeof mapboxgl === "undefined") {
     if (mapEl) {
       mapEl.innerHTML =
@@ -208,6 +216,68 @@
     if (routeClearBtn) routeClearBtn.hidden = true;
   }
 
+  async function fetchDirectionsToLngLat(destLngLat, label) {
+    if (!destLngLat || !Array.isArray(destLngLat) || destLngLat.length < 2) return;
+    const dLng = Number(destLngLat[0]);
+    const dLat = Number(destLngLat[1]);
+    if (!Number.isFinite(dLng) || !Number.isFinite(dLat)) return;
+    if (!inKnoxBBox(dLng, dLat)) {
+      setStatus("That destination is outside the Knoxville focus area.");
+      return;
+    }
+
+    const origin = userLngLat || refLngLat || KNOX_CENTER;
+    const o = origin;
+    const d = [dLng, dLat];
+    const url =
+      `https://api.mapbox.com/directions/v5/mapbox/driving/${o[0]},${o[1]};${d[0]},${d[1]}` +
+      `?geometries=geojson&steps=true&overview=full&access_token=${encodeURIComponent(token)}`;
+
+    setStatus("Fetching directions…");
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      const route = data.routes && data.routes[0];
+      if (!route || !route.geometry || !route.geometry.coordinates) {
+        setStatus("No route found.");
+        return;
+      }
+
+      clearRoute();
+      map.addSource("route", {
+        type: "geojson",
+        data: { type: "Feature", geometry: route.geometry, properties: {} },
+      });
+      map.addLayer({
+        id: "route-line",
+        type: "line",
+        source: "route",
+        paint: { "line-color": "#d87125", "line-width": 5 },
+      });
+
+      const bounds = new mapboxgl.LngLatBounds();
+      for (const c of route.geometry.coordinates) bounds.extend(c);
+      map.fitBounds(bounds, { padding: 48, maxZoom: 14, duration: 600 });
+
+      if (routeSummaryEl) {
+        const title = label ? `${label} — ` : "";
+        routeSummaryEl.textContent = `${title}${formatDistance(route.distance)} · ${formatDuration(
+          route.duration,
+        )} driving`;
+      }
+      if (routeStepsEl && route.legs && route.legs[0] && route.legs[0].steps) {
+        const steps = route.legs[0].steps.slice(0, 12);
+        routeStepsEl.innerHTML = steps
+          .map((s) => `<li>${escapeHtml(s.maneuver && s.maneuver.instruction ? s.maneuver.instruction : "")}</li>`)
+          .join("");
+      }
+      if (routeClearBtn) routeClearBtn.hidden = false;
+      setStatus("");
+    } catch {
+      setStatus("Directions request failed. Check your connection and token.");
+    }
+  }
+
   async function fetchDirections(destId) {
     const dest = foodCollection.features.find((x) => x.properties.id === destId);
     if (!dest) return;
@@ -355,6 +425,10 @@
     setStatus(
       "Locations shown are a curated Knoxville-area sample. Always confirm hours and eligibility before visiting.",
     );
+
+    if (deepDestLngLat) {
+      fetchDirectionsToLngLat(deepDestLngLat, deepDestName);
+    }
   });
 
   if (searchForm && searchInput) {

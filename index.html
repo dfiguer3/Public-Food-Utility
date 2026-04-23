@@ -6,9 +6,15 @@
     <title>Home • Public Food Utility</title>
     <meta name="description" content="Public Food Utility — Home" />
     <link rel="stylesheet" href="./styles.css" />
+    <script>
+      // Mapbox token is supplied by local `map-config.js` (gitignored).
+      window.MAPBOX_ACCESS_TOKEN = window.MAPBOX_ACCESS_TOKEN || "";
+    </script>
+    <script defer src="./map-config.js"></script>
     <script defer src="./script.js"></script>
     <script defer src="./theme.js"></script>
     <script defer src="./profile-drawer.js"></script>
+    <script defer src="./home-events.js"></script>
   </head>
   <body class="app">
     <main class="screen" data-screen="home">
@@ -72,15 +78,7 @@
               </a>
             </div>
 
-            <a class="home-card" href="map.html" aria-label="Event card 1" style="top:75px">
-              <button class="home-fav" type="button" data-action="toggle-fav" aria-label="Favorite event 1"></button>
-            </a>
-            <a class="home-card" href="map.html" aria-label="Event card 2" style="top:80px">
-              <button class="home-fav" type="button" data-action="toggle-fav" aria-label="Favorite event 2"></button>
-            </a>
-            <a class="home-card" href="map.html" aria-label="Event card 3" style="top:200px">
-              <button class="home-fav" type="button" data-action="toggle-fav" aria-label="Favorite event 3"></button>
-            </a>
+            <div id="home-events" class="home-events" aria-label="Nearby free food events"></div>
           </div>
         </section>
       </div>

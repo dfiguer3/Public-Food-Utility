@@ -19,6 +19,11 @@ function initDrawer(phone) {
   const openRatio = Number(drawer.getAttribute("data-open-ratio") || "0.75");
   const handle = $("[data-profile-handle]", drawer) || drawer;
   const peekBtn = $("[data-profile-peek-btn]", drawer);
+  const openers = [
+    peekBtn,
+    $("[data-profile-open]", phone),
+    $(".home-avatar", phone), // home header avatar
+  ].filter(Boolean);
 
   let openHeight = 0;
   let closedY = 0;
@@ -91,7 +96,8 @@ function initDrawer(phone) {
   }
 
   function onPointerDown(e) {
-    if (e.button !== undefined && e.button !== 0) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    e.preventDefault();
     compute();
     isDragging = true;
     drawer.classList.add("is-dragging");
@@ -105,6 +111,7 @@ function initDrawer(phone) {
 
   function onPointerMove(e) {
     if (!isDragging) return;
+    e.preventDefault();
     const dy = e.clientY - startClientY;
     apply(startY + dy);
     lastClientY = e.clientY;
@@ -114,6 +121,7 @@ function initDrawer(phone) {
   function onPointerUp(e) {
     if (!isDragging) return;
     isDragging = false;
+    handle.releasePointerCapture?.(e.pointerId);
 
     const now = performance.now();
     const dt = Math.max(1, now - lastTime);
@@ -134,9 +142,9 @@ function initDrawer(phone) {
 
   // Events
   handle.addEventListener("pointerdown", onPointerDown);
-  window.addEventListener("pointermove", onPointerMove);
-  window.addEventListener("pointerup", onPointerUp);
-  window.addEventListener("pointercancel", onPointerUp);
+  document.addEventListener("pointermove", onPointerMove);
+  document.addEventListener("pointerup", onPointerUp);
+  document.addEventListener("pointercancel", onPointerUp);
   window.addEventListener("keydown", onKeydown);
   window.addEventListener("resize", () => {
     compute();
@@ -144,7 +152,13 @@ function initDrawer(phone) {
   });
 
   backdrop.addEventListener("click", () => snap(false));
-  peekBtn?.addEventListener("click", () => snap(!isOpen));
+  for (const el of openers) {
+    el.addEventListener("click", (e) => {
+      // Avatar is an <a>; prevent navigation and open the drawer instead.
+      e.preventDefault?.();
+      snap(!isOpen);
+    });
+  }
 }
 
 function main() {

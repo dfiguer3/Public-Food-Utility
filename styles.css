@@ -297,14 +297,19 @@ h6 {
   bottom: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 144px; /* extra room for floating nav */
+  padding: 20px 36px 144px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .home-section-row {
-  position: absolute;
-  left: 37px;
-  right: 37px;
-  top: 20px; /* section header position within sheet content */
+  position: sticky;
+  top: 0;
+  height: 64px;
+  padding: 0 0 12px;
+  background: var(--puf-yellow);
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -332,12 +337,96 @@ h6 {
 }
 
 .home-card {
-  position: absolute;
-  left: 36px;
-  width: 318px; /* sampled card width */
-  height: 104px; /* sampled card height */
+  position: relative;
+  width: 100%;
+  min-height: 104px; /* allow content to grow */
   border-radius: var(--puf-card-radius);
   background: var(--puf-card-bg);
+  box-shadow: var(--shadow-card);
+}
+
+.home-events-status {
+  margin: 0;
+  padding: 14px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.65);
+  color: #2d2a4e;
+  font-weight: 600;
+}
+
+.event-card {
+  padding: 14px 14px 12px;
+}
+
+.event-card__top {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.event-card__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.event-card__title {
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: #2d2a4e;
+  margin-bottom: 4px;
+}
+
+.event-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: rgba(45, 42, 78, 0.8);
+  margin-bottom: 6px;
+}
+
+.event-card__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 235, 165, 0.55);
+  border: 1px solid rgba(45, 42, 78, 0.15);
+  color: rgba(45, 42, 78, 0.85);
+}
+
+.event-card__addr {
+  color: rgba(45, 42, 78, 0.75);
+  font-weight: 600;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.event-card__actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.event-dir-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 0;
+  background: var(--puf-blue);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.event-dir-btn[disabled] {
+  background: rgba(45, 42, 78, 0.2);
+  color: rgba(45, 42, 78, 0.6);
+  cursor: not-allowed;
 }
 
 .home-card .home-fav {
