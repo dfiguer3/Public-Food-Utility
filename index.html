@@ -8,118 +8,98 @@
     <link rel="stylesheet" href="./styles.css" />
     <script defer src="./script.js"></script>
     <script defer src="./theme.js"></script>
+    <script defer src="./profile-drawer.js"></script>
   </head>
   <body class="app">
     <main class="screen" data-screen="home">
-      <div class="phone" role="application" aria-label="Public Food Utility">
-        <div class="phone-bg" aria-hidden="true"></div>
+      <div class="phone home-frame" role="application" aria-label="Public Food Utility">
+        <div class="profile-backdrop" data-profile-backdrop aria-hidden="true"></div>
+        <section
+          class="profile-drawer"
+          data-profile-drawer
+          data-peek="56"
+          data-open-ratio="0.75"
+          role="dialog"
+          aria-label="Profile drawer"
+          aria-hidden="true"
+        >
+          <div class="profile-drawer-peek" data-profile-handle>
+            <div class="profile-drawer-handle" aria-hidden="true"></div>
+            <button type="button" data-profile-peek-btn class="snap-custom-btn" aria-label="Open profile">
+              Profile
+            </button>
+          </div>
+          <div class="profile-drawer-content" aria-label="Profile content">
+            <div class="profile-icon" aria-hidden="true"></div>
+            <div class="sheet sheet-profile" aria-label="Profile details">
+              <h1 class="page-title">Profile</h1>
+              <div class="profile-row">
+                <div class="profile-label">Name</div>
+                <div class="profile-value">Anonymous</div>
+              </div>
+              <div class="profile-row">
+                <div class="profile-label">Location</div>
+                <div class="profile-value">Knoxville</div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        <header class="topbar">
-          <button class="icon-btn" type="button" data-modal="menu" aria-label="Menu">
-            <span class="icon icon-dots" aria-hidden="true"></span>
+        <header class="home-header" aria-label="Header">
+          <button class="home-menu" type="button" data-modal="menu" aria-label="Menu">
+            <span class="home-dots" aria-hidden="true"><span aria-hidden="true"></span></span>
           </button>
 
-          <a class="avatar" href="profile.html" aria-label="Profile"></a>
+          <div class="home-title" aria-label="App title">Your Plate</div>
+
+          <a class="home-avatar" href="profile.html" aria-label="Profile">
+            <img alt="" src="https://www.figma.com/api/mcp/asset/a2c1075d-6915-4401-a952-4c5dcfec623a" />
+          </a>
         </header>
 
-        <section class="home-grid" aria-label="Home content">
-          <section class="panel panel-near" aria-label="Near you">
-            <div class="panel-head">
-              <a class="panel-title-link" href="events.html">
-                <span class="panel-title">Near You</span>
-                <span class="icon icon-arrow" aria-hidden="true"></span>
+        <div class="home-hero-circle" aria-hidden="true"></div>
+
+        <section class="home-sheet" aria-label="Bottom sheet">
+          <div class="home-sheet-scroll" aria-label="Sheet content">
+            <div class="home-section-row" aria-label="Section header">
+              <h1 class="home-heading">Nearby Events</h1>
+              <a class="home-map-btn" href="map.html" aria-label="Open map">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M8.6 5.2 3 3v15.8l5.6 2.2 6.8-2.2L21 21V5.2l-5.6-2.2-6.8 2.2Zm0 2.3v11.1L5 17.2V6.1l3.6 1.4Zm2 11.1V7.5l4.8-1.6v11.1l-4.8 1.6Zm6.8.6V8.1L19 6.8v11.1l-1.6 1.3Z"
+                  />
+                </svg>
               </a>
             </div>
 
-            <a class="near-card near-1" href="event-1.html">
-              <div class="near-card-row">
-                <span class="near-card-title">Knoxville Dream Center</span>
-                <button class="mini-btn" type="button" data-action="toggle-fav" aria-label="Favorite Knoxville Dream Center"></button>
-                <span class="icon icon-share" aria-hidden="true"></span>
-              </div>
-              <ul class="near-card-list">
-                <li>Free meals &amp; groceries</li>
-                <li>Weekly rotating food truck</li>
-              </ul>
+            <a class="home-card" href="map.html" aria-label="Event card 1" style="top:75px">
+              <button class="home-fav" type="button" data-action="toggle-fav" aria-label="Favorite event 1"></button>
             </a>
-
-            <a class="near-card near-2" href="event-2.html">
-              <div class="near-card-row">
-                <span class="near-card-title">Love Kitchen</span>
-                <button class="mini-btn" type="button" data-action="toggle-fav" aria-label="Favorite Love Kitchen"></button>
-                <span class="icon icon-share" aria-hidden="true"></span>
-              </div>
-              <ul class="near-card-list">
-                <li>Free meals &amp; emergency food packages</li>
-                <li>Hrs vary; best to call prior</li>
-              </ul>
+            <a class="home-card" href="map.html" aria-label="Event card 2" style="top:80px">
+              <button class="home-fav" type="button" data-action="toggle-fav" aria-label="Favorite event 2"></button>
             </a>
-
-            <a class="near-card near-3" href="event-3.html">
-              <div class="near-card-row">
-                <span class="near-card-title">Fish Hospitality</span>
-                <button class="mini-btn" type="button" data-action="toggle-fav" aria-label="Favorite Fish Hospitality"></button>
-                <span class="icon icon-share" aria-hidden="true"></span>
-              </div>
-              <ul class="near-card-list">
-                <li>Grocery distribution</li>
-                <li>Kid BOOST food bags</li>
-                <li>Dependent on location</li>
-              </ul>
+            <a class="home-card" href="map.html" aria-label="Event card 3" style="top:200px">
+              <button class="home-fav" type="button" data-action="toggle-fav" aria-label="Favorite event 3"></button>
             </a>
-
-            <a class="near-card near-4" href="events.html">
-              <div class="near-card-row">
-                <span class="near-card-title">Knox Needs</span>
-                <button class="mini-btn" type="button" data-action="toggle-fav" aria-label="Favorite Knox Needs"></button>
-                <span class="icon icon-share" aria-hidden="true"></span>
-              </div>
-              <ul class="near-card-list">
-                <li>No cook ready to eat meals</li>
-                <li>Everyday 4–4:30pm</li>
-              </ul>
-            </a>
-          </section>
-
-          <section class="home-right" aria-label="Support and SNAP">
-            <section class="seg seg-home" aria-label="Quick actions">
-              <a class="seg-pill is-active" href="snap.html" aria-label="SNAP">
-                <span class="icon icon-mail" aria-hidden="true"></span>
-              </a>
-              <a class="seg-pill" href="mailbox.html" aria-label="Mailbox">
-                <span class="icon icon-mail" aria-hidden="true"></span>
-              </a>
-              <a class="seg-pill" href="emergency.html" aria-label="Emergency">
-                <span class="icon icon-alert" aria-hidden="true"></span>
-              </a>
-            </section>
-
-            <section class="panel panel-support" aria-label="Support">
-              <div class="panel-head">
-                <a class="panel-title-link" href="financial.html">
-                  <span class="panel-title">Support</span>
-                  <span class="icon icon-arrow" aria-hidden="true"></span>
-                </a>
-              </div>
-              <div class="support-bubbles" aria-hidden="true">
-                <div class="bubble b1"></div>
-                <div class="bubble b2"></div>
-                <div class="bubble b3"></div>
-                <div class="bubble b4"></div>
-              </div>
-            </section>
-
-            <a class="snap-card" href="snap.html" aria-label="Go to SNAP">
-              <div class="snap-card-img" aria-hidden="true"></div>
-            </a>
-          </section>
+          </div>
         </section>
-
-        <a class="map-preview" href="map.html" aria-label="Map">
-          <div class="map-preview-pin" aria-hidden="true"></div>
-        </a>
       </div>
     </main>
+
+    <nav class="puf-float-nav" aria-label="Primary navigation">
+      <a class="is-active" href="index.html" aria-current="page" aria-label="Nearby">
+        <img alt="" width="49" height="49" src="https://www.figma.com/api/mcp/asset/7a7a9b4a-eeca-40ba-974c-94fa8453cfeb" />
+      </a>
+      <a href="snap.html" aria-label="SNAP">
+        <img alt="" width="51" height="51" src="https://www.figma.com/api/mcp/asset/36b7826d-3153-4d38-9b04-decf16ce94bf" />
+      </a>
+      <a href="support.html" aria-label="Support">
+        <img alt="" width="48" height="48" src="https://www.figma.com/api/mcp/asset/e5a0c845-af77-45b2-a9f7-accc230ea2e5" />
+      </a>
+      <a href="mailbox.html" aria-label="Mailbox">
+        <img alt="" width="45" height="45" src="https://www.figma.com/api/mcp/asset/796b26d8-c4f9-494d-bdc5-3ff67b693229" />
+      </a>
+    </nav>
 
     <dialog class="modal" data-modal-root="menu" aria-label="Menu">
       <form method="dialog" class="modal-backdrop">
@@ -131,12 +111,13 @@
             </button>
           </div>
           <nav class="modal-nav" aria-label="Menu links">
-            <a href="events.html">Events</a>
+            <a href="index.html">Home</a>
             <a href="map.html">Map</a>
             <a href="mailbox.html">Mailbox</a>
             <a href="snap.html">SNAP</a>
-            <a href="financial.html">Support</a>
+            <a href="support.html">Support</a>
             <a href="emergency.html">Emergency</a>
+            <a href="profile.html">Profile</a>
           </nav>
         </div>
       </form>

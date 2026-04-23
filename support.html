@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Support • Public Food Utility</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./script.js"></script>
+    <script defer src="./profile-drawer.js"></script>
+  </head>
+  <body class="app">
+    <main class="screen" data-screen="support">
+      <div class="phone puf-frame" role="application" aria-label="Support">
+        <div class="profile-backdrop" data-profile-backdrop aria-hidden="true"></div>
+        <section
+          class="profile-drawer"
+          data-profile-drawer
+          data-peek="56"
+          data-open-ratio="0.75"
+          role="dialog"
+          aria-label="Profile drawer"
+          aria-hidden="true"
+        >
+          <div class="profile-drawer-peek" data-profile-handle>
+            <div class="profile-drawer-handle" aria-hidden="true"></div>
+            <button type="button" data-profile-peek-btn class="snap-custom-btn" aria-label="Open profile">
+              Profile
+            </button>
+          </div>
+          <div class="profile-drawer-content" aria-label="Profile content">
+            <div class="profile-icon" aria-hidden="true"></div>
+            <div class="sheet sheet-profile" aria-label="Profile details">
+              <h1 class="page-title">Profile</h1>
+              <div class="profile-row">
+                <div class="profile-label">Name</div>
+                <div class="profile-value">Anonymous</div>
+              </div>
+              <div class="profile-row">
+                <div class="profile-label">Location</div>
+                <div class="profile-value">Knoxville</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="puf-soft-top" aria-hidden="true"></div>
+        <div class="puf-circle" aria-hidden="true"></div>
+        <div class="puf-circle-inner" aria-hidden="true"></div>
+        <div class="puf-noisy" aria-hidden="true"></div>
+
+        <header class="puf-header">
+          <button class="puf-menu" type="button" data-modal="menu" aria-label="Menu">
+            <img alt="" src="https://www.figma.com/api/mcp/asset/de0306f2-482f-4148-9d8e-b67e724211e6" />
+          </button>
+
+          <div class="puf-title" aria-label="App title">Your Plate</div>
+
+          <a class="puf-avatar" href="profile.html" aria-label="Profile">
+            <img alt="" src="https://www.figma.com/api/mcp/asset/7684c94b-6b35-494c-ae84-267403e5e228" />
+          </a>
+        </header>
+
+        <nav class="puf-float-nav" aria-label="Primary navigation">
+          <a href="index.html" aria-label="Nearby">
+            <img alt="" width="49" height="49" src="https://www.figma.com/api/mcp/asset/cad77861-9a57-4d63-9741-188bb8a004c0" />
+          </a>
+          <a href="snap.html" aria-label="SNAP">
+            <img alt="" width="51" height="51" src="https://www.figma.com/api/mcp/asset/05fe05de-604d-4d67-b17a-5ab4dd04ec28" />
+          </a>
+          <a class="is-active" href="support.html" aria-current="page" aria-label="Support">
+            <img alt="" width="48" height="48" src="https://www.figma.com/api/mcp/asset/a7974620-ea22-4b05-9e80-3fb7971c324f" />
+          </a>
+          <a href="mailbox.html" aria-label="Mailbox">
+            <img alt="" width="45" height="45" src="https://www.figma.com/api/mcp/asset/5979e05b-f382-47e5-9192-98b55b53fd7d" />
+          </a>
+        </nav>
+
+        <div class="puf-scroll" aria-label="Support list">
+          <div class="puf-scroll-stage" style="height:720px">
+            <h1 class="puf-section-title" style="top:16px">Nutritional Support</h1>
+
+            <div class="puf-support-card" style="top:72px;height:105px" aria-hidden="true"></div>
+            <div style="position:absolute;left:52px;top:79px;z-index:3">
+              <a class="puf-support-link" href="map.html">Knox Area Rescue Ministries (KARM)</a>
+            </div>
+            <ul class="puf-support-bullets" style="position:absolute;left:43px;top:105px;width:296px;z-index:3">
+              <li>24/7 emergency shelter</li>
+              <li>Meals</li>
+              <li>Case management</li>
+              <li>Transitional programs</li>
+            </ul>
+
+            <div class="puf-support-card" style="top:195px;height:97px" aria-hidden="true"></div>
+            <div style="position:absolute;left:52px;top:202px;z-index:3">
+              <a class="puf-support-link" href="map.html">Knox County Housing Authority</a>
+            </div>
+            <ul class="puf-support-bullets" style="position:absolute;left:43px;top:228px;width:296px;z-index:3">
+              <li>Provides safe, affordable housing</li>
+              <li>Related services for low‑income individuals and families</li>
+            </ul>
+
+            <div class="puf-support-card" style="top:311px;height:101px" aria-hidden="true"></div>
+            <div style="position:absolute;left:52px;top:320px;z-index:3">
+              <a class="puf-support-link" href="map.html">Knoxville Leadership Foundation “Operation Backyard”</a>
+            </div>
+            <ul class="puf-support-bullets" style="position:absolute;left:43px;top:367px;width:296px;z-index:3">
+              <li>Free home repair services for low‑income, elderly, and disabled homeowners</li>
+            </ul>
+
+            <div class="puf-support-card" style="top:430px;height:90px" aria-hidden="true"></div>
+            <div style="position:absolute;left:52px;top:437px;z-index:3">
+              <a class="puf-support-link" href="map.html">Knoxville Area Urban League</a>
+            </div>
+            <ul class="puf-support-bullets" style="position:absolute;left:43px;top:463px;width:296px;z-index:3">
+              <li>Housing assistance</li>
+              <li>Financial education</li>
+              <li>Homeownership support</li>
+            </ul>
+
+            <div class="puf-support-card" style="top:538px;height:95px" aria-hidden="true"></div>
+            <div style="position:absolute;left:52px;top:544px;z-index:3">
+              <a class="puf-support-link" href="map.html">Family Promise of Knoxville</a>
+            </div>
+            <ul class="puf-support-bullets" style="position:absolute;left:43px;top:570px;width:296px;z-index:3">
+              <li>Temporary housing, meals, and support services to help families achieve sustainable independence</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <dialog class="modal" data-modal-root="menu" aria-label="Menu">
+      <form method="dialog" class="modal-backdrop">
+        <div class="modal-sheet" role="document">
+          <div class="modal-head">
+            <div class="modal-title">Menu</div>
+            <button class="icon-btn" value="cancel" aria-label="Close">
+              <span class="icon icon-x" aria-hidden="true"></span>
+            </button>
+          </div>
+          <nav class="modal-nav" aria-label="Menu links">
+            <a href="index.html">Home</a>
+            <a href="map.html">Map</a>
+            <a href="mailbox.html">Mailbox</a>
+            <a href="snap.html">SNAP</a>
+            <a href="support.html">Support</a>
+            <a href="emergency.html">Emergency</a>
+            <a href="profile.html">Profile</a>
+          </nav>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>
+

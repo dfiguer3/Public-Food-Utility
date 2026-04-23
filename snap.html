@@ -7,88 +7,125 @@
     <link rel="stylesheet" href="./styles.css" />
     <script defer src="./script.js"></script>
     <script defer src="./theme.js"></script>
+    <script defer src="./profile-drawer.js"></script>
     <script defer src="./snap.js"></script>
   </head>
   <body class="app">
     <main class="screen" data-screen="snap">
-      <div class="phone" role="application" aria-label="SNAP">
-        <div class="phone-bg" aria-hidden="true"></div>
-        <header class="topbar">
-          <a class="icon-btn" href="index.html" aria-label="Back">
-            <span class="icon icon-back" aria-hidden="true"></span>
-          </a>
-          <button class="icon-btn" type="button" data-modal="menu" aria-label="Menu">
-            <span class="icon icon-dots" aria-hidden="true"></span>
+      <div class="phone puf-frame" role="application" aria-label="SNAP">
+        <div class="profile-backdrop" data-profile-backdrop aria-hidden="true"></div>
+        <section
+          class="profile-drawer"
+          data-profile-drawer
+          data-peek="56"
+          data-open-ratio="0.75"
+          role="dialog"
+          aria-label="Profile drawer"
+          aria-hidden="true"
+        >
+          <div class="profile-drawer-peek" data-profile-handle>
+            <div class="profile-drawer-handle" aria-hidden="true"></div>
+            <button type="button" data-profile-peek-btn class="snap-custom-btn" aria-label="Open profile">
+              Profile
+            </button>
+          </div>
+          <div class="profile-drawer-content" aria-label="Profile content">
+            <div class="profile-icon" aria-hidden="true"></div>
+            <div class="sheet sheet-profile" aria-label="Profile details">
+              <h1 class="page-title">Profile</h1>
+              <div class="profile-row">
+                <div class="profile-label">Name</div>
+                <div class="profile-value">Anonymous</div>
+              </div>
+              <div class="profile-row">
+                <div class="profile-label">Location</div>
+                <div class="profile-value">Knoxville</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="puf-soft-top" aria-hidden="true"></div>
+        <div class="puf-circle" aria-hidden="true"></div>
+        <div class="puf-circle-inner" aria-hidden="true"></div>
+        <div class="puf-noisy" aria-hidden="true"></div>
+
+        <header class="puf-header">
+          <button class="puf-menu" type="button" data-modal="menu" aria-label="Menu">
+            <img alt="" src="https://www.figma.com/api/mcp/asset/6e5f6e6c-69bf-4c0f-8de2-e37420f1fb5c" />
           </button>
+
+          <div class="puf-title" aria-label="App title">Your Plate</div>
+
+          <a class="puf-avatar" href="profile.html" aria-label="Profile">
+            <img alt="" src="https://www.figma.com/api/mcp/asset/9fcbd7f4-cfd2-4af4-83aa-4d099cd881f5" />
+          </a>
         </header>
 
-        <section class="content">
-          <div class="snap-hero" aria-label="EBT card preview">
-            <div class="snap-hero-img" aria-hidden="true"></div>
-            <img
-              id="snap-ebt-card-top"
-              class="snap-ebt-top"
-              src="./assets/ebt-card-1.png"
-              alt="Selected EBT card style"
-              loading="eager"
-            />
-          </div>
+        <nav class="puf-float-nav" aria-label="Primary navigation">
+          <a href="index.html" aria-label="Nearby">
+            <img alt="" width="49" height="49" src="https://www.figma.com/api/mcp/asset/08bb147f-afdc-4adf-8663-cddf7c31f384" />
+          </a>
+          <a class="is-active" href="snap.html" aria-current="page" aria-label="SNAP">
+            <img alt="" width="51" height="51" src="https://www.figma.com/api/mcp/asset/a68ca46c-93e3-4657-a8cd-fc83f3871929" />
+          </a>
+          <a href="support.html" aria-label="Support">
+            <img alt="" width="48" height="48" src="https://www.figma.com/api/mcp/asset/3434eeb7-9e1f-422f-a4fb-31a21c1bbf5b" />
+          </a>
+          <a href="mailbox.html" aria-label="Mailbox">
+            <img alt="" width="45" height="45" src="https://www.figma.com/api/mcp/asset/12d0fbc8-5161-47fe-ba0c-11fcbbf78a2e" />
+          </a>
+        </nav>
 
-          <div class="sheet sheet-snap" aria-label="Your SNAP">
-            <div class="sheet-head">
-              <h1 class="page-title">Your SNAP</h1>
-              <div class="sheet-icons" aria-hidden="true">
-                <span class="icon icon-dollar"></span>
-                <span class="icon icon-receipt"></span>
-                <span class="icon icon-card"></span>
-              </div>
+        <div class="puf-scroll" aria-label="SNAP content">
+          <div class="puf-scroll-stage" style="height:1220px">
+            <div class="puf-snap-hero" aria-label="EBT card" style="top:21px">
+              <img
+                id="snap-ebt-card-top"
+                src="./assets/ebt-card-1.png"
+                alt="Selected EBT card style"
+                loading="eager"
+              />
             </div>
 
-            <div class="kv">
-              <div class="kv-label">Balance</div>
-              <div class="kv-value" data-snap-metric="balance">$237.54</div>
-            </div>
+            <section class="snap-glance" aria-label="This month at a glance" style="top:250px">
+              <h2 class="snap-glance-title">This month at a glance</h2>
 
-            <section class="snap-info" aria-label="SNAP estimates">
-              <h2 class="snap-info-title">This month at a glance</h2>
+              <article class="snap-glance-card">
+                <div class="snap-glance-body">
+                  <div class="snap-glance-name">Estimated monthly benefit</div>
+                  <div class="snap-glance-desc">Based on household size and common eligibility ranges.</div>
+                </div>
+                <div class="snap-glance-badge" data-snap-metric="monthlyBenefit">$—</div>
+              </article>
 
-              <div class="snap-cards" role="list">
-                <article class="snap-card-info" role="listitem">
-                  <div class="snap-card-body">
-                    <div class="snap-card-title">Estimated monthly benefit</div>
-                    <div class="snap-card-desc">Based on household size and common eligibility ranges.</div>
-                  </div>
-                  <div class="snap-badge" data-snap-metric="monthlyBenefit">$—</div>
-                </article>
+              <article class="snap-glance-card">
+                <div class="snap-glance-body">
+                  <div class="snap-glance-name">Household size</div>
+                  <div class="snap-glance-desc">Used to estimate benefits and grocery planning.</div>
+                </div>
+                <div class="snap-glance-badge" data-snap-metric="household">—</div>
+              </article>
 
-                <article class="snap-card-info" role="listitem">
-                  <div class="snap-card-body">
-                    <div class="snap-card-title">Household size</div>
-                    <div class="snap-card-desc">Used to estimate benefits and grocery planning.</div>
-                  </div>
-                  <div class="snap-badge" data-snap-metric="household">—</div>
-                </article>
+              <article class="snap-glance-card">
+                <div class="snap-glance-body">
+                  <div class="snap-glance-name">Next deposit in</div>
+                  <div class="snap-glance-desc">Approximate countdown (varies by schedule).</div>
+                </div>
+                <div class="snap-glance-badge" data-snap-metric="nextDeposit">— days</div>
+              </article>
 
-                <article class="snap-card-info" role="listitem">
-                  <div class="snap-card-body">
-                    <div class="snap-card-title">Next deposit in</div>
-                    <div class="snap-card-desc">Approximate countdown (varies by case schedule).</div>
-                  </div>
-                  <div class="snap-badge" data-snap-metric="nextDeposit">— days</div>
-                </article>
-
-                <article class="snap-card-info" role="listitem">
-                  <div class="snap-card-body">
-                    <div class="snap-card-title">Spend target this week</div>
-                    <div class="snap-card-desc">A simple pacing suggestion to stretch benefits.</div>
-                  </div>
-                  <div class="snap-badge" data-snap-metric="weeklyTarget">$—</div>
-                </article>
-              </div>
+              <article class="snap-glance-card">
+                <div class="snap-glance-body">
+                  <div class="snap-glance-name">Spend target this week</div>
+                  <div class="snap-glance-desc">A simple pacing suggestion to stretch benefits.</div>
+                </div>
+                <div class="snap-glance-badge" data-snap-metric="weeklyTarget">$—</div>
+              </article>
             </section>
 
-            <section class="snap-info" aria-label="EBT card customization">
-              <h2 class="snap-info-title">Your EBT card</h2>
+            <section class="snap-customize" aria-label="Card customization" style="top:520px">
+              <h2 class="snap-customize-title">Your EBT card</h2>
 
               <div class="snap-card-custom">
                 <img
@@ -98,6 +135,7 @@
                   alt="Your EBT card style preview"
                   loading="lazy"
                 />
+
                 <div class="snap-card-custom-actions">
                   <button
                     type="button"
@@ -107,6 +145,7 @@
                   >
                     Confirm
                   </button>
+
                   <button type="button" class="snap-custom-btn" data-card-theme="prev" aria-label="Previous card style">
                     Prev
                   </button>
@@ -114,42 +153,23 @@
                     Next
                   </button>
                 </div>
+
                 <div class="snap-card-custom-note muted">
                   This only changes the look of your card in the app (demo). It does not change your real EBT card.
                 </div>
               </div>
             </section>
 
-            <section class="snap-info" aria-label="Recent purchases">
-              <h2 class="snap-info-title">Past purchases</h2>
-              <div class="snap-purchases" role="list" aria-label="Recent purchases list">
-                <div class="snap-row" role="listitem">
-                  <div class="snap-row-main">
-                    <div class="snap-row-title">Grocery store</div>
-                    <div class="snap-row-sub">—</div>
-                  </div>
-                  <div class="snap-row-value">$—</div>
-                </div>
-              </div>
-            </section>
+            <div class="puf-snap-sheet" aria-hidden="true" style="top:860px"></div>
+            <h1 class="puf-snap-sheet-title" style="top:876px">Your SNAP</h1>
 
-            <section class="snap-info" aria-label="Pay bills">
-              <h2 class="snap-info-title">Pay bills</h2>
-              <div class="snap-bills" role="list" aria-label="Bills list">
-                <div class="snap-row" role="listitem">
-                  <div class="snap-row-main">
-                    <div class="snap-row-title">Utilities</div>
-                    <div class="snap-row-sub">Due —</div>
-                  </div>
-                  <button type="button" class="snap-pay-btn" aria-label="Pay bill">Pay</button>
-                </div>
-              </div>
-              <p class="snap-disclaimer muted">
-                Demo: payment buttons don’t charge anything. They’re here to show how the flow could work.
-              </p>
-            </section>
+            <div class="puf-snap-balance-label" style="top:914px">Balance</div>
+            <div class="puf-snap-balance-value" style="top:914px" data-snap-metric="balance">$237.54</div>
           </div>
-        </section>
+        </div>
+
+        <!-- Required hook for script.js (safe to keep invisible) -->
+        <button type="button" data-action="toggle-fav" aria-label="Toggle favorite" hidden></button>
       </div>
     </main>
 
@@ -164,10 +184,9 @@
           </div>
           <nav class="modal-nav" aria-label="Menu links">
             <a href="index.html">Home</a>
-            <a href="events.html">Events</a>
             <a href="map.html">Map</a>
             <a href="mailbox.html">Mailbox</a>
-            <a href="financial.html">Support</a>
+            <a href="support.html">Support</a>
             <a href="emergency.html">Emergency</a>
             <a href="profile.html">Profile</a>
           </nav>
