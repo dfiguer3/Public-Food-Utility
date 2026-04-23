@@ -47,7 +47,15 @@
     return `${h} hr ${mm} min`;
   }
 
-  const token = window.MAPBOX_ACCESS_TOKEN;
+  const token =
+    window.MAPBOX_ACCESS_TOKEN ||
+    (function () {
+      try {
+        return localStorage.getItem("MAPBOX_ACCESS_TOKEN") || "";
+      } catch {
+        return "";
+      }
+    })();
   const mapEl = $("#map");
   const listEl = $("#map-place-list");
   const searchForm = $("#map-search-form");
@@ -76,8 +84,38 @@
 
   if (!mapEl || !token) {
     if (mapEl) {
-      mapEl.innerHTML =
-        '<p class="map-error">Add your Mapbox public token. Copy <code>map-config.example.js</code> to <code>map-config.js</code> and set <code>MAPBOX_ACCESS_TOKEN</code>, then reload. Open this site via <code>http://localhost:5173/map.html</code> (not <code>file://</code>) so <code>map-config.js</code> loads.</p>';
+      mapEl.innerHTML = `
+        <div class="map-error">
+          <p><strong>Mapbox token needed.</strong></p>
+          <p>
+            Paste your public Mapbox token (starts with <code>pk.</code>). It will be saved to this browser only.
+          </p>
+          <form id="map-token-form" class="map-token-form">
+            <input id="map-token-input" type="password" autocomplete="off" placeholder="pk.••••" />
+            <button type="submit">Save token</button>
+          </form>
+          <p class="map-token-help">
+            Alternatively, create <code>map-config.js</code> from <code>map-config.example.js</code>.
+          </p>
+        </div>
+      `;
+
+      const form = $("#map-token-form");
+      const input = $("#map-token-input");
+      form?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const v = (input?.value || "").trim();
+        if (!v || !v.startsWith("pk.")) {
+          alert("Please paste a public Mapbox token that starts with pk.");
+          return;
+        }
+        try {
+          localStorage.setItem("MAPBOX_ACCESS_TOKEN", v);
+        } catch {
+          // ignore
+        }
+        window.location.reload();
+      });
     }
     return;
   }
