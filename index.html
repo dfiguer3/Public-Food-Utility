@@ -10,10 +10,13 @@
       // Mapbox token is supplied by local `map-config.js` (gitignored).
       window.MAPBOX_ACCESS_TOKEN = window.MAPBOX_ACCESS_TOKEN || "";
     </script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script defer src="./map-config.js"></script>
     <script defer src="./script.js"></script>
     <script defer src="./theme.js"></script>
     <script defer src="./profile-drawer.js"></script>
+    <script defer src="./profile-image.js"></script>
+    <script defer src="./google-auth.js"></script>
     <script defer src="./home-events.js"></script>
   </head>
   <body class="app">
@@ -30,16 +33,52 @@
           aria-hidden="true"
         >
           <div class="profile-drawer-content" aria-label="Profile content">
-            <div class="profile-icon" aria-hidden="true"></div>
-            <div class="sheet sheet-profile" aria-label="Profile details">
-              <h1 class="page-title">Profile</h1>
-              <div class="profile-row">
-                <div class="profile-label">Name</div>
-                <div class="profile-value">Anonymous</div>
-              </div>
-              <div class="profile-row">
-                <div class="profile-label">Location</div>
-                <div class="profile-value">Knoxville</div>
+            <button class="profile-avatar-edit" type="button" data-action="edit-profile-photo" aria-label="Change photo">
+              Change
+            </button>
+            <input
+              class="profile-avatar-input"
+              type="file"
+              accept="image/*"
+              data-profile-photo-input
+              aria-label="Upload profile photo"
+            />
+
+            <div class="profile-plate">
+              <div class="profile-plate__rim"></div>
+              <div class="profile-plate__well"></div>
+              <div class="profile-plate__shine"></div>
+              <img
+                class="profile-plate-avatar"
+                alt="Profile photo"
+                data-profile-photo
+                src="https://www.figma.com/api/mcp/asset/a2c1075d-6915-4401-a952-4c5dcfec623a"
+              />
+            </div>
+
+            <div class="profile-plate-content">
+              <div class="sheet sheet-profile" aria-label="Profile details">
+                <h1 class="page-title">Profile</h1>
+                <div class="profile-row">
+                  <div class="profile-label">Name</div>
+                  <div class="profile-value" data-profile-name>Anonymous</div>
+                </div>
+                <div class="profile-row">
+                  <div class="profile-label">Location</div>
+                  <div class="profile-value" data-profile-location>Knoxville</div>
+                </div>
+                <div class="profile-row">
+                  <div class="profile-label">Account</div>
+                  <div class="profile-value" data-profile-email>Not signed in</div>
+                </div>
+
+                <div class="profile-auth">
+                  <div id="google-signin-btn" class="google-signin-btn" aria-label="Sign in with Google"></div>
+                  <button class="google-signout-btn" type="button" data-action="google-signout">Sign out</button>
+                  <div class="profile-auth-note">
+                    Google sign-in is used to fill your profile. (Prototype: stored on this device.)
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -57,13 +96,7 @@
           </button>
 
           <div class="home-title" aria-label="App title">Your Plate</div>
-
-          <button type="button" class="home-avatar" data-profile-open aria-label="Open profile">
-            <img alt="" src="https://www.figma.com/api/mcp/asset/a2c1075d-6915-4401-a952-4c5dcfec623a" />
-          </button>
         </header>
-
-        <div class="home-hero-circle" aria-hidden="true"></div>
 
         <section class="home-sheet" aria-label="Bottom sheet">
           <div class="home-sheet-scroll" aria-label="Sheet content">

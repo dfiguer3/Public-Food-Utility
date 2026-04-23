@@ -63,6 +63,7 @@
     function snap(open) {
       isOpen = open;
       drawer.classList.remove("is-dragging");
+      drawer.classList.toggle("is-open", open);
       apply(open ? 0 : closedY);
       if (open) {
         openerEl = document.activeElement;
