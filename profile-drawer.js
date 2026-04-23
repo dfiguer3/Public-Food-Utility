@@ -1,170 +1,177 @@
-const $ = (selector, root = document) => root.querySelector(selector);
+/* global CSS */
+(function () {
+  "use strict";
 
-function clamp(n, min, max) {
-  return Math.max(min, Math.min(max, n));
-}
+  const q = (selector, root = document) => root.querySelector(selector);
 
-function getFocusable(root) {
-  const sel =
-    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
-  return Array.from(root.querySelectorAll(sel)).filter((el) => !el.hasAttribute("disabled") && el.tabIndex !== -1);
-}
-
-function initDrawer(phone) {
-  const drawer = $("[data-profile-drawer]", phone);
-  const backdrop = $("[data-profile-backdrop]", phone);
-  if (!drawer || !backdrop) return;
-
-  const peek = Number(drawer.getAttribute("data-peek") || "56");
-  const openRatio = Number(drawer.getAttribute("data-open-ratio") || "0.75");
-  const handle = $("[data-profile-handle]", drawer) || drawer;
-  const peekBtn = $("[data-profile-peek-btn]", drawer);
-  const openers = [
-    peekBtn,
-    $("[data-profile-open]", phone),
-    $(".home-avatar", phone), // home header avatar
-  ].filter(Boolean);
-
-  let openHeight = 0;
-  let closedY = 0;
-  let y = 0;
-  let isOpen = false;
-  let isDragging = false;
-  let startClientY = 0;
-  let startY = 0;
-  let startTime = 0;
-  let lastClientY = 0;
-  let lastTime = 0;
-  let openerEl = null;
-
-  const prefersReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-
-  function compute() {
-    const h = phone.clientHeight || 852;
-    openHeight = Math.round(h * openRatio);
-    drawer.style.height = `${openHeight}px`;
-    closedY = -(openHeight - peek);
+  function clamp(n, min, max) {
+    return Math.max(min, Math.min(max, n));
   }
 
-  function apply(nextY) {
-    y = clamp(nextY, closedY, 0);
-    drawer.style.setProperty("--profile-drawer-y", `${y}px`);
-    const showing = y > closedY + 1;
-    backdrop.classList.toggle("is-open", showing);
-    drawer.setAttribute("aria-hidden", showing ? "false" : "true");
+  function getFocusable(root) {
+    const sel =
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    return Array.from(root.querySelectorAll(sel)).filter(
+      (el) => !el.hasAttribute("disabled") && el.tabIndex !== -1,
+    );
   }
 
-  function snap(open) {
-    isOpen = open;
-    drawer.classList.remove("is-dragging");
-    apply(open ? 0 : closedY);
-    if (open) {
-      openerEl = document.activeElement;
-      const focusables = getFocusable(drawer);
-      (focusables[0] || peekBtn || drawer).focus?.();
-    } else {
-      const target = peekBtn || openerEl;
-      target?.focus?.();
-      openerEl = null;
-    }
-  }
+  function initDrawer(phone) {
+    const drawer = q("[data-profile-drawer]", phone);
+    const backdrop = q("[data-profile-backdrop]", phone);
+    if (!drawer || !backdrop) return;
 
-  function onKeydown(e) {
-    if (e.key === "Escape") {
-      if (isOpen) {
-        e.preventDefault();
-        snap(false);
-      }
-      return;
+    const peek = Number(drawer.getAttribute("data-peek") || "56");
+    const openRatio = Number(drawer.getAttribute("data-open-ratio") || "0.75");
+    const handle = q("[data-profile-handle]", drawer) || drawer;
+    const peekBtn = q("[data-profile-peek-btn]", drawer);
+    const openers = [
+      peekBtn,
+      q("[data-profile-open]", phone),
+      q(".home-avatar", phone), // home header avatar
+    ].filter(Boolean);
+
+    let openHeight = 0;
+    let closedY = 0;
+    let y = 0;
+    let isOpen = false;
+    let isDragging = false;
+    let startClientY = 0;
+    let startY = 0;
+    let startTime = 0;
+    let lastClientY = 0;
+    let lastTime = 0;
+    let openerEl = null;
+
+    const prefersReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+
+    function compute() {
+      const h = phone.clientHeight || 852;
+      openHeight = Math.round(h * openRatio);
+      drawer.style.height = `${openHeight}px`;
+      closedY = -(openHeight - peek);
     }
 
-    if (!isOpen || e.key !== "Tab") return;
-    const focusables = getFocusable(drawer);
-    if (!focusables.length) return;
-
-    const first = focusables[0];
-    const last = focusables[focusables.length - 1];
-    const active = document.activeElement;
-
-    if (e.shiftKey && active === first) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && active === last) {
-      e.preventDefault();
-      first.focus();
+    function apply(nextY) {
+      y = clamp(nextY, closedY, 0);
+      drawer.style.setProperty("--profile-drawer-y", `${y}px`);
+      const showing = y > closedY + 1;
+      backdrop.classList.toggle("is-open", showing);
+      drawer.setAttribute("aria-hidden", showing ? "false" : "true");
     }
-  }
 
-  function onPointerDown(e) {
-    if (e.pointerType === "mouse" && e.button !== 0) return;
-    e.preventDefault();
-    compute();
-    isDragging = true;
-    drawer.classList.add("is-dragging");
-    startClientY = e.clientY;
-    startY = y;
-    startTime = performance.now();
-    lastClientY = e.clientY;
-    lastTime = startTime;
-    handle.setPointerCapture?.(e.pointerId);
-  }
-
-  function onPointerMove(e) {
-    if (!isDragging) return;
-    e.preventDefault();
-    const dy = e.clientY - startClientY;
-    apply(startY + dy);
-    lastClientY = e.clientY;
-    lastTime = performance.now();
-  }
-
-  function onPointerUp(e) {
-    if (!isDragging) return;
-    isDragging = false;
-    handle.releasePointerCapture?.(e.pointerId);
-
-    const now = performance.now();
-    const dt = Math.max(1, now - lastTime);
-    const v = (e.clientY - lastClientY) / dt; // px per ms
-
-    const halfway = closedY / 2;
-    const shouldOpen = v > 0.35 || (v > -0.15 && y > halfway);
-
-    if (prefersReduced) {
+    function snap(open) {
+      isOpen = open;
       drawer.classList.remove("is-dragging");
+      apply(open ? 0 : closedY);
+      if (open) {
+        openerEl = document.activeElement;
+        const focusables = getFocusable(drawer);
+        (focusables[0] || peekBtn || drawer).focus?.();
+      } else {
+        const target = peekBtn || openerEl;
+        target?.focus?.();
+        openerEl = null;
+      }
     }
-    snap(shouldOpen);
-  }
 
-  // Initial state
-  compute();
-  apply(closedY);
+    function onKeydown(e) {
+      if (e.key === "Escape") {
+        if (isOpen) {
+          e.preventDefault();
+          snap(false);
+        }
+        return;
+      }
 
-  // Events
-  handle.addEventListener("pointerdown", onPointerDown);
-  document.addEventListener("pointermove", onPointerMove);
-  document.addEventListener("pointerup", onPointerUp);
-  document.addEventListener("pointercancel", onPointerUp);
-  window.addEventListener("keydown", onKeydown);
-  window.addEventListener("resize", () => {
+      if (!isOpen || e.key !== "Tab") return;
+      const focusables = getFocusable(drawer);
+      if (!focusables.length) return;
+
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
+    function onPointerDown(e) {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      e.preventDefault();
+      compute();
+      isDragging = true;
+      drawer.classList.add("is-dragging");
+      startClientY = e.clientY;
+      startY = y;
+      startTime = performance.now();
+      lastClientY = e.clientY;
+      lastTime = startTime;
+      handle.setPointerCapture?.(e.pointerId);
+    }
+
+    function onPointerMove(e) {
+      if (!isDragging) return;
+      e.preventDefault();
+      const dy = e.clientY - startClientY;
+      apply(startY + dy);
+      lastClientY = e.clientY;
+      lastTime = performance.now();
+    }
+
+    function onPointerUp(e) {
+      if (!isDragging) return;
+      isDragging = false;
+      handle.releasePointerCapture?.(e.pointerId);
+
+      const now = performance.now();
+      const dt = Math.max(1, now - lastTime);
+      const v = (e.clientY - lastClientY) / dt; // px per ms
+
+      const halfway = closedY / 2;
+      const shouldOpen = v > 0.35 || (v > -0.15 && y > halfway);
+
+      if (prefersReduced) {
+        drawer.classList.remove("is-dragging");
+      }
+      snap(shouldOpen);
+    }
+
+    // Initial state
     compute();
-    apply(isOpen ? 0 : closedY);
-  });
+    apply(closedY);
 
-  backdrop.addEventListener("click", () => snap(false));
-  for (const el of openers) {
-    el.addEventListener("click", (e) => {
-      // Avatar is an <a>; prevent navigation and open the drawer instead.
-      e.preventDefault?.();
-      snap(!isOpen);
+    // Events
+    handle.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("pointermove", onPointerMove);
+    document.addEventListener("pointerup", onPointerUp);
+    document.addEventListener("pointercancel", onPointerUp);
+    window.addEventListener("keydown", onKeydown);
+    window.addEventListener("resize", () => {
+      compute();
+      apply(isOpen ? 0 : closedY);
     });
+
+    backdrop.addEventListener("click", () => snap(false));
+    for (const el of openers) {
+      el.addEventListener("click", (e) => {
+        // Avatar is an <a>; prevent navigation and open the drawer instead.
+        e.preventDefault?.();
+        snap(!isOpen);
+      });
+    }
   }
-}
 
-function main() {
-  document.querySelectorAll(".phone").forEach(initDrawer);
-}
+  function main() {
+    document.querySelectorAll(".phone").forEach(initDrawer);
+  }
 
-if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", main);
-else main();
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", main);
+  else main();
+})();
 

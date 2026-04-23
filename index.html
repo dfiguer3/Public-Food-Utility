@@ -29,12 +29,6 @@
           aria-label="Profile drawer"
           aria-hidden="true"
         >
-          <div class="profile-drawer-peek" data-profile-handle>
-            <div class="profile-drawer-handle" aria-hidden="true"></div>
-            <button type="button" data-profile-peek-btn class="snap-custom-btn" aria-label="Open profile">
-              Profile
-            </button>
-          </div>
           <div class="profile-drawer-content" aria-label="Profile content">
             <div class="profile-icon" aria-hidden="true"></div>
             <div class="sheet sheet-profile" aria-label="Profile details">
@@ -49,6 +43,12 @@
               </div>
             </div>
           </div>
+          <div class="profile-drawer-peek" data-profile-handle>
+            <div class="profile-drawer-handle" aria-hidden="true"></div>
+            <button type="button" data-profile-peek-btn class="snap-custom-btn" aria-label="Open profile">
+              Profile
+            </button>
+          </div>
         </section>
 
         <header class="home-header" aria-label="Header">
@@ -58,9 +58,9 @@
 
           <div class="home-title" aria-label="App title">Your Plate</div>
 
-          <a class="home-avatar" href="profile.html" aria-label="Profile">
+          <button type="button" class="home-avatar" data-profile-open aria-label="Open profile">
             <img alt="" src="https://www.figma.com/api/mcp/asset/a2c1075d-6915-4401-a952-4c5dcfec623a" />
-          </a>
+          </button>
         </header>
 
         <div class="home-hero-circle" aria-hidden="true"></div>
