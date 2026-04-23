@@ -57,7 +57,7 @@
 
   /* ===== Home.png extracted tokens (pixel-sampled) ===== */
   --puf-blue: #0f1ead; /* header + nav strip */
-  --puf-yellow: #ffeba5; /* median of sheet gradient */
+  --puf-yellow: #fefaef;
   --puf-nav-bg: #0f1ead; /* nav strip background */
   --puf-icon-color: #ffe273; /* icon yellow */
   --puf-card-bg: #ffffff;
@@ -311,6 +311,17 @@ h6 {
   gap: 8px;
 }
 
+.home-sheet-scroll--stage {
+  display: block;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.home-sheet-scroll--stage .puf-scroll-stage {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .home-section-row {
   position: sticky;
   top: 0;
@@ -349,7 +360,8 @@ h6 {
   width: 100%;
   min-height: 104px; /* allow content to grow */
   border-radius: var(--puf-card-radius);
-  background: var(--puf-card-bg);
+  background: var(--puf-yellow);
+  border: 2px solid #5a2f1a; /* chocolate */
   box-shadow: var(--shadow-card);
 }
 
