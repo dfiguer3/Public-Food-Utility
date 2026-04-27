@@ -10,6 +10,7 @@
     <script defer src="./profile-drawer.js"></script>
     <script defer src="./profile-image.js"></script>
     <script defer src="./google-auth.js"></script>
+    <script defer src="./mailbox.js"></script>
   </head>
   <body class="app">
     <main class="screen" data-screen="mailbox">
@@ -103,14 +104,14 @@
 
         <section class="home-sheet" aria-label="Main content">
           <div class="home-sheet-scroll home-sheet-scroll--stage" aria-label="Inbox">
-            <div class="puf-scroll-stage" style="height:640px">
-            <h1 class="puf-section-title" style="top:16px">Inbox</h1>
+            <div class="puf-scroll-stage mailbox-stage">
+              <div class="home-section-row mailbox-header" aria-label="Mailbox header">
+                <h1 class="home-heading">Mailbox</h1>
+                <span class="mailbox-subtitle" aria-hidden="true">Coupons & notices</span>
+              </div>
 
-            <a class="puf-card" href="mail.html" aria-label="Message 1" style="top:71px"></a>
-            <a class="puf-card" href="mail.html" aria-label="Message 2" style="top:196px"></a>
-            <a class="puf-card" href="mail.html" aria-label="Message 3" style="top:320px"></a>
-            <a class="puf-card" href="mail.html" aria-label="Message 4" style="top:445px"></a>
-          </div>
+              <div id="mailbox-list" class="mailbox-list" role="list" aria-label="Mail items"></div>
+            </div>
           </div>
         </section>
       </div>
@@ -133,6 +134,64 @@
             <a href="emergency.html">Emergency</a>
             <a href="profile.html">Profile</a>
           </nav>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal modal-wallet" data-modal-root="coupon-wallet" aria-label="Coupon wallet">
+      <form method="dialog" class="modal-backdrop modal-backdrop--center">
+        <div class="wallet-sheet" role="document" aria-label="Coupon wallet card">
+          <div class="wallet-top">
+            <div class="wallet-brand">
+              <div class="wallet-logo" aria-hidden="true"></div>
+              <div>
+                <div id="wallet-store" class="wallet-store">Store</div>
+                <div id="wallet-offer" class="wallet-offer">Offer</div>
+              </div>
+            </div>
+            <button class="wallet-close" value="cancel" aria-label="Close">
+              <span aria-hidden="true">✕</span>
+            </button>
+          </div>
+
+          <div class="wallet-value-row">
+            <div id="wallet-value" class="wallet-value">$0.00</div>
+            <div id="wallet-exp" class="wallet-exp">Expires —</div>
+          </div>
+
+          <div class="wallet-code" aria-label="Barcode placeholder">
+            <div class="wallet-barcode" aria-hidden="true"></div>
+            <div id="wallet-code-text" class="wallet-code-text">CODE</div>
+          </div>
+
+          <div class="wallet-cta">
+            <button class="wallet-cta-btn" type="button" data-wallet-action>
+              Scan at Register
+            </button>
+            <div class="wallet-cta-note">Tap to Redeem</div>
+          </div>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal modal-letter" data-modal-root="letter-view" aria-label="Letter">
+      <form method="dialog" class="modal-backdrop modal-backdrop--center">
+        <div class="letter-sheet" role="document" aria-label="Letter content">
+          <div class="letter-head">
+            <div class="letter-sender">
+              <div class="letter-seal" aria-hidden="true"></div>
+              <div>
+                <div id="letter-from" class="letter-from">Sender</div>
+                <div id="letter-subject" class="letter-subject">Subject</div>
+              </div>
+            </div>
+            <button class="letter-close" value="cancel" aria-label="Close">
+              <span class="icon icon-x" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <div id="letter-meta" class="letter-meta">Date</div>
+          <div id="letter-body" class="letter-body"></div>
         </div>
       </form>
     </dialog>

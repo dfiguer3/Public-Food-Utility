@@ -3,6 +3,7 @@
 
   const KNOX_BBOX = { west: -84.2, south: 35.75, east: -83.55, north: 36.15 };
   const KNOX_CENTER = [-83.9207, 35.9606];
+  const PAGE_SIZE = 4;
 
   const $ = (sel, root = document) => root.querySelector(sel);
 
@@ -113,7 +114,7 @@
     },
   ].map((x) => ({
     ...x,
-    distM: haversineMeters(KNOX_CENTER, [x.lng, x.lat]),
+    distM: haversineMeters(KNOX_CENTER, [x.lng, x.lat]), // default; recomputed once we know user location
   }));
 
   function directionsUrl({ lng, lat, name }) {
@@ -166,12 +167,52 @@
       .join("");
   }
 
+  async function getUserCenter() {
+    if (!("geolocation" in navigator)) return KNOX_CENTER;
+
+    return await new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lng = pos?.coords?.longitude;
+          const lat = pos?.coords?.latitude;
+          if (!Number.isFinite(lng) || !Number.isFinite(lat)) return resolve(KNOX_CENTER);
+          resolve([lng, lat]);
+        },
+        () => resolve(KNOX_CENTER),
+        { enableHighAccuracy: false, timeout: 3500, maximumAge: 120000 },
+      );
+    });
+  }
+
   async function main() {
     const root = $("#home-events");
     if (!root) return;
 
-    const items = MOCK_EVENTS.filter((x) => inKnoxBBox(x.lng, x.lat)).slice().sort((a, b) => a.distM - b.distM);
-    render(root, items);
+    const moreWrap = $(".home-events-more");
+    const moreBtn = $("#home-events-more-btn");
+
+    const userCenter = await getUserCenter();
+    const all = MOCK_EVENTS.filter((x) => inKnoxBBox(x.lng, x.lat))
+      .map((x) => ({ ...x, distM: haversineMeters(userCenter, [x.lng, x.lat]) }))
+      .sort((a, b) => a.distM - b.distM);
+
+    let visible = PAGE_SIZE;
+
+    function update() {
+      render(root, all.slice(0, visible));
+      const hasMore = visible < all.length;
+      if (moreWrap) moreWrap.hidden = !hasMore;
+      if (moreBtn) moreBtn.disabled = !hasMore;
+    }
+
+    if (moreBtn) {
+      moreBtn.addEventListener("click", () => {
+        visible = Math.min(all.length, visible + PAGE_SIZE);
+        update();
+      });
+    }
+
+    update();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", main);
