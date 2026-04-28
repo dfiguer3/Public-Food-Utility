@@ -10,6 +10,7 @@
     <script defer src="./profile-drawer.js"></script>
     <script defer src="./profile-image.js"></script>
     <script defer src="./google-auth.js"></script>
+    <script defer src="./support-filter.js"></script>
   </head>
   <body class="app">
     <main class="screen" data-screen="support">
@@ -91,16 +92,16 @@
 
         <nav class="puf-float-nav" aria-label="Primary navigation">
           <a href="homepage.html" aria-label="Nearby">
-            <img alt="" width="49" height="49" src="https://www.figma.com/api/mcp/asset/cad77861-9a57-4d63-9741-188bb8a004c0" />
+            <span class="nav-icon nav-icon--nearby" aria-hidden="true"></span>
           </a>
           <a href="snap.html" aria-label="SNAP">
-            <img alt="" width="51" height="51" src="https://www.figma.com/api/mcp/asset/05fe05de-604d-4d67-b17a-5ab4dd04ec28" />
+            <span class="nav-icon nav-icon--snap" aria-hidden="true"></span>
           </a>
           <a class="is-active" href="support.html" aria-current="page" aria-label="Support">
-            <img alt="" width="48" height="48" src="https://www.figma.com/api/mcp/asset/a7974620-ea22-4b05-9e80-3fb7971c324f" />
+            <span class="nav-icon nav-icon--support" aria-hidden="true"></span>
           </a>
           <a href="mailbox.html" aria-label="Mailbox">
-            <img alt="" width="45" height="45" src="https://www.figma.com/api/mcp/asset/5979e05b-f382-47e5-9192-98b55b53fd7d" />
+            <span class="nav-icon nav-icon--mailbox" aria-hidden="true"></span>
           </a>
         </nav>
 
@@ -109,60 +110,112 @@
             <div class="puf-scroll-stage support-stage">
               <div class="home-section-row support-header" aria-label="Support section header">
                 <h1 class="home-heading">Support</h1>
+                <div class="mailbox-head-actions" aria-label="Support filters">
+                  <button
+                    id="support-filter-btn"
+                    class="mailbox-filter-btn"
+                    type="button"
+                    aria-label="Filter support"
+                    aria-haspopup="dialog"
+                  >
+                    <span class="mailbox-filter-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M4 6.5c0-.55.45-1 1-1h14a1 1 0 0 1 .77 1.64l-5.77 6.93V18a1 1 0 0 1-.55.9l-3 1.5A1 1 0 0 1 9 19.5v-5.43L4.23 7.14A1 1 0 0 1 4 6.5Z"
+                        />
+                      </svg>
+                    </span>
+                    <span class="mailbox-filter-text">Filter</span>
+                    <span class="mailbox-filter-dot" aria-hidden="true"></span>
+                  </button>
+                </div>
               </div>
 
               <div class="support-list" aria-label="Support resources">
-                <div class="puf-support-card" style="top:0;height:105px" aria-hidden="true"></div>
-                <div style="position:absolute;left:12px;top:7px;z-index:3">
-                  <a class="puf-support-link" href="map.html">Knox Area Rescue Ministries (KARM)</a>
-                </div>
-                <ul class="puf-support-bullets" style="position:absolute;left:3px;top:33px;width:min(296px,calc(100% - 6px));z-index:3">
-                  <li>24/7 emergency shelter</li>
-                  <li>Meals</li>
-                  <li>Case management</li>
-                  <li>Transitional programs</li>
-                </ul>
+                <article id="support-card-1" class="support-card" data-tags="nutritional,housing">
+                  <a class="support-card__title" href="map.html">Knox Area Rescue Ministries (KARM)</a>
+                  <ul class="support-card__bullets">
+                    <li>24/7 emergency shelter</li>
+                    <li>Meals</li>
+                    <li>Case management</li>
+                    <li>Transitional programs</li>
+                  </ul>
+                </article>
 
-                <div class="puf-support-card" style="top:123px;height:97px" aria-hidden="true"></div>
-                <div style="position:absolute;left:12px;top:130px;z-index:3">
-                  <a class="puf-support-link" href="map.html">Knox County Housing Authority</a>
-                </div>
-                <ul class="puf-support-bullets" style="position:absolute;left:3px;top:156px;width:min(296px,calc(100% - 6px));z-index:3">
-                  <li>Provides safe, affordable housing</li>
-                  <li>Related services for low‑income individuals and families</li>
-                </ul>
+                <article class="support-card" data-tags="housing">
+                  <a class="support-card__title" href="map.html">Knox County Housing Authority</a>
+                  <ul class="support-card__bullets">
+                    <li>Provides safe, affordable housing</li>
+                    <li>Related services for low‑income individuals and families</li>
+                  </ul>
+                </article>
 
-                <div class="puf-support-card" style="top:239px;height:101px" aria-hidden="true"></div>
-                <div style="position:absolute;left:12px;top:248px;z-index:3">
-                  <a class="puf-support-link" href="map.html">Knoxville Leadership Foundation “Operation Backyard”</a>
-                </div>
-                <ul class="puf-support-bullets" style="position:absolute;left:3px;top:295px;width:min(296px,calc(100% - 6px));z-index:3">
-                  <li>Free home repair services for low‑income, elderly, and disabled homeowners</li>
-                </ul>
+                <article class="support-card" data-tags="housing">
+                  <a class="support-card__title" href="map.html">Knoxville Leadership Foundation “Operation Backyard”</a>
+                  <ul class="support-card__bullets">
+                    <li>Free home repair services for low‑income, elderly, and disabled homeowners</li>
+                  </ul>
+                </article>
 
-                <div class="puf-support-card" style="top:358px;height:90px" aria-hidden="true"></div>
-                <div style="position:absolute;left:12px;top:365px;z-index:3">
-                  <a class="puf-support-link" href="map.html">Knoxville Area Urban League</a>
-                </div>
-                <ul class="puf-support-bullets" style="position:absolute;left:3px;top:391px;width:min(296px,calc(100% - 6px));z-index:3">
-                  <li>Housing assistance</li>
-                  <li>Financial education</li>
-                  <li>Homeownership support</li>
-                </ul>
+                <article id="support-card-urban-league" class="support-card" data-tags="housing,financial">
+                  <a class="support-card__title" href="map.html">Knoxville Area Urban League</a>
+                  <ul class="support-card__bullets">
+                    <li>Housing assistance</li>
+                    <li>Financial education</li>
+                    <li>Homeownership support</li>
+                  </ul>
+                </article>
 
-                <div class="puf-support-card" style="top:466px;height:95px" aria-hidden="true"></div>
-                <div style="position:absolute;left:12px;top:472px;z-index:3">
-                  <a class="puf-support-link" href="map.html">Family Promise of Knoxville</a>
-                </div>
-                <ul class="puf-support-bullets" style="position:absolute;left:3px;top:498px;width:min(296px,calc(100% - 6px));z-index:3">
-                  <li>Temporary housing, meals, and support services to help families achieve sustainable independence</li>
-                </ul>
+                <article class="support-card" data-tags="housing,nutritional">
+                  <a class="support-card__title" href="map.html">Family Promise of Knoxville</a>
+                  <ul class="support-card__bullets">
+                    <li>Temporary housing, meals, and support services to help families achieve sustainable independence</li>
+                  </ul>
+                </article>
               </div>
             </div>
           </div>
         </section>
       </div>
     </main>
+
+    <dialog class="modal modal-filter" data-modal-root="support-filter" aria-label="Filter support">
+      <form method="dialog" class="modal-backdrop modal-backdrop--center">
+        <div class="filter-sheet" role="document" aria-label="Support filters">
+          <div class="filter-head">
+            <div class="filter-title">Filter</div>
+            <button class="filter-close" value="cancel" aria-label="Close">
+              <span class="icon icon-x" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <div class="filter-body">
+            <div class="filter-group" role="group" aria-label="Filter categories">
+              <button class="filter-pill" type="button" data-filter="nutritional">
+                <span class="filter-check" aria-hidden="true">✓</span>
+                Nutritional Support
+              </button>
+              <button class="filter-pill" type="button" data-filter="financial">
+                <span class="filter-check" aria-hidden="true">✓</span>
+                Financial Support
+              </button>
+              <button class="filter-pill" type="button" data-filter="housing">
+                <span class="filter-check" aria-hidden="true">✓</span>
+                Housing Support
+              </button>
+            </div>
+
+            <div class="filter-actions">
+              <button id="support-filter-reset" class="filter-reset" type="button">Reset</button>
+            </div>
+          </div>
+
+          <div class="filter-foot">
+            <button id="support-filter-apply" class="filter-apply" type="button">Apply</button>
+          </div>
+        </div>
+      </form>
+    </dialog>
 
     <dialog class="modal" data-modal-root="menu" aria-label="Menu">
       <form method="dialog" class="modal-backdrop">

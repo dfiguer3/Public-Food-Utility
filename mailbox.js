@@ -177,7 +177,7 @@
     const d = formatDate(item.date);
     const preview = Array.isArray(item.body) ? item.body.slice(0, 2).join(" ") : "";
     return `
-      <button class="mail-card mail-card--letter" type="button" data-mail-id="${escapeHtml(
+      <button class="mail-card mail-card--letter mail-item" type="button" data-mail-id="${escapeHtml(
         item.id,
       )}" role="listitem" aria-label="Letter from ${escapeHtml(item.from)}">
         <div class="letter-card-top">

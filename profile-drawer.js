@@ -3,6 +3,117 @@
   "use strict";
 
   const q = (selector, root = document) => root.querySelector(selector);
+  let threeLoadPromise = null;
+
+  function loadThree() {
+    if (threeLoadPromise) return threeLoadPromise;
+    threeLoadPromise = Promise.all([
+      import("https://unpkg.com/three@0.160.0/build/three.module.js"),
+      import("https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js"),
+    ]).then(([THREE, loaders]) => ({ THREE, GLTFLoader: loaders.GLTFLoader }));
+    return threeLoadPromise;
+  }
+
+  function normalizeToTarget(THREE, root, targetSize = 2.2) {
+    const box = new THREE.Box3().setFromObject(root);
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    box.getSize(size);
+    box.getCenter(center);
+    const largest = Math.max(size.x, size.y, size.z) || 1;
+    const scale = targetSize / largest;
+    root.scale.setScalar(scale);
+
+    const scaledBox = new THREE.Box3().setFromObject(root);
+    const scaledCenter = new THREE.Vector3();
+    scaledBox.getCenter(scaledCenter);
+    root.position.sub(scaledCenter);
+    root.position.y -= scaledBox.min.y;
+  }
+
+  function init3DPlate(phone) {
+    const plateHost = q(".profile-plate", phone);
+    if (!plateHost) return;
+    if (plateHost.dataset.plate3dInit === "1") return;
+    plateHost.dataset.plate3dInit = "1";
+
+    const canvas = document.createElement("canvas");
+    canvas.className = "profile-plate-3d";
+    plateHost.insertBefore(canvas, plateHost.firstChild);
+
+    const staticBits = plateHost.querySelectorAll(".profile-plate__rim, .profile-plate__well, .profile-plate__shine");
+
+    loadThree()
+      .then(({ THREE, GLTFLoader }) => {
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio || 1);
+        renderer.shadowMap.enabled = true;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+        camera.position.set(0, 2, 5);
+        camera.lookAt(0, 0, 0);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+        const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+        sun.position.set(5, 10, 7);
+        sun.castShadow = true;
+        scene.add(sun);
+
+        const loader = new GLTFLoader();
+        let plateModel = null;
+
+        function resize() {
+          const w = plateHost.clientWidth || 320;
+          const h = plateHost.clientHeight || 320;
+          renderer.setSize(w, h, false);
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+        }
+
+        const ro = new ResizeObserver(() => resize());
+        ro.observe(plateHost);
+        resize();
+
+        // Note: URL has a space; use encodeURI.
+        const src = encodeURI("./assets/models/plate_no words.glb");
+        loader.load(
+          src,
+          (gltf) => {
+            plateModel = gltf.scene;
+            plateModel.traverse((c) => {
+              if (c.isMesh) {
+                c.castShadow = true;
+                c.receiveShadow = true;
+              }
+            });
+            normalizeToTarget(THREE, plateModel, 2.5);
+            plateModel.rotation.x = -Math.PI / 2;
+            scene.add(plateModel);
+
+            // Hide the old CSS plate layers once 3D loads.
+            staticBits.forEach((el) => (el.style.display = "none"));
+          },
+          undefined,
+          () => {
+            // If the GLB fails to load, keep the CSS plate visible.
+            plateHost.dataset.plate3dInit = "0";
+          },
+        );
+
+        function animate() {
+          requestAnimationFrame(animate);
+          if (plateModel) {
+            plateModel.rotation.z = Math.sin(Date.now() * 0.001) * 0.02;
+          }
+          renderer.render(scene, camera);
+        }
+        animate();
+      })
+      .catch(() => {
+        plateHost.dataset.plate3dInit = "0";
+      });
+  }
 
   function clamp(n, min, max) {
     return Math.max(min, Math.min(max, n));
@@ -169,7 +280,10 @@
   }
 
   function main() {
-    document.querySelectorAll(".phone").forEach(initDrawer);
+    document.querySelectorAll(".phone").forEach((phone) => {
+      initDrawer(phone);
+      init3DPlate(phone);
+    });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", main);
