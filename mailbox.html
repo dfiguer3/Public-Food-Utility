@@ -107,7 +107,31 @@
             <div class="puf-scroll-stage mailbox-stage">
               <div class="home-section-row mailbox-header" aria-label="Mailbox header">
                 <h1 class="home-heading">Mailbox</h1>
-                <span class="mailbox-subtitle" aria-hidden="true">Coupons & notices</span>
+                <div class="mailbox-head-actions" aria-label="Mailbox actions">
+                  <button
+                    id="mailbox-filter-btn"
+                    class="mailbox-filter-btn"
+                    type="button"
+                    data-modal="mailbox-filter"
+                    aria-label="Filter mailbox"
+                    aria-haspopup="dialog"
+                  >
+                    <span class="mailbox-filter-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M4 6.5c0-.55.45-1 1-1h14a1 1 0 0 1 .77 1.64l-5.77 6.93V18a1 1 0 0 1-.55.9l-3 1.5A1 1 0 0 1 9 19.5v-5.43L4.23 7.14A1 1 0 0 1 4 6.5Z"
+                        />
+                      </svg>
+                    </span>
+                    <span class="mailbox-filter-text">Filter</span>
+                    <span class="mailbox-filter-dot" aria-hidden="true"></span>
+                  </button>
+
+                  <span class="mailbox-subtitle" aria-hidden="true">Coupons & notices</span>
+                  <button class="mailbox-info-btn" type="button" data-modal="mailbox-info" aria-label="Mailbox info">
+                    <span class="mailbox-info-icon" aria-hidden="true">i</span>
+                  </button>
+                </div>
               </div>
 
               <div id="mailbox-list" class="mailbox-list" role="list" aria-label="Mail items"></div>
@@ -134,6 +158,68 @@
             <a href="emergency.html">Emergency</a>
             <a href="profile.html">Profile</a>
           </nav>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal" data-modal-root="mailbox-info" aria-label="Mailbox help">
+      <form method="dialog" class="modal-backdrop modal-backdrop--center">
+        <div class="modal-sheet" role="document" aria-label="How the mailbox works">
+          <div class="modal-head">
+            <div class="modal-title">How Mailbox works</div>
+            <button class="icon-btn" value="cancel" aria-label="Close">
+              <span class="icon icon-x" aria-hidden="true"></span>
+            </button>
+          </div>
+          <div class="mailbox-info-body">
+            <p class="mailbox-info-lead">
+              Your Mailbox collects coupons and official notices that can help you save money and stay up to date.
+            </p>
+            <ul class="mailbox-info-list">
+              <li><strong>Coupons</strong>: tap to open a Wallet-style pass you can scan at the register.</li>
+              <li><strong>Notices</strong>: tap to read the full letter (appointments, reminders, benefit updates).</li>
+              <li><strong>Close</strong>: tap outside the pop-up, press the X, or hit Escape.</li>
+            </ul>
+            <p class="mailbox-info-foot">Tip: keep an eye on expiration dates so you don’t miss deals.</p>
+          </div>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal modal-filter" data-modal-root="mailbox-filter" aria-label="Filter mailbox">
+      <form method="dialog" class="modal-backdrop modal-backdrop--center">
+        <div class="filter-sheet" role="document" aria-label="Mailbox filters">
+          <div class="filter-head">
+            <div class="filter-title">Filter</div>
+            <button class="filter-close" value="cancel" aria-label="Close">
+              <span class="icon icon-x" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <div class="filter-body">
+            <div class="filter-group" role="group" aria-label="Filter categories">
+              <button class="filter-pill" type="button" data-filter="nutritional">
+                <span class="filter-check" aria-hidden="true">✓</span>
+                Nutritional Support
+              </button>
+              <button class="filter-pill" type="button" data-filter="financial">
+                <span class="filter-check" aria-hidden="true">✓</span>
+                Financial Support
+              </button>
+              <button class="filter-pill" type="button" data-filter="housing">
+                <span class="filter-check" aria-hidden="true">✓</span>
+                Housing Support
+              </button>
+            </div>
+
+            <div class="filter-actions">
+              <button id="mailbox-filter-reset" class="filter-reset" type="button">Reset</button>
+            </div>
+          </div>
+
+          <div class="filter-foot">
+            <button id="mailbox-filter-apply" class="filter-apply" type="button">Apply</button>
+          </div>
         </div>
       </form>
     </dialog>

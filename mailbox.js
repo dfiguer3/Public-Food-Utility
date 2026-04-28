@@ -25,50 +25,88 @@
     else dialog.setAttribute("open", "");
   }
 
+  function closeDialog(dialog) {
+    if (!dialog) return;
+    if (typeof dialog.close === "function") dialog.close();
+    else dialog.removeAttribute("open");
+  }
+
+  function escapeAttr(s) {
+    return escapeHtml(s).replace(/'/g, "&#39;");
+  }
+
+  function couponImageSrc(path) {
+    if (!path) return "";
+    try {
+      return new URL(path, document.baseURI).href;
+    } catch {
+      return String(path).replace(/ /g, "%20");
+    }
+  }
+
   const MAIL = [
     {
-      id: "c-restaurant-20",
+      id: "c-publix-bogo",
       type: "coupon",
-      category: "Restaurant",
-      store: "Smoky Mountain Diner",
-      offer: "20% Off Your Next Order",
-      valueText: "20% OFF",
-      expires: "2026-05-31",
-      code: "SMD-20OFF-5261",
-      tone: "warm",
-    },
-    {
-      id: "c-restaurant-bogo",
-      type: "coupon",
-      category: "Restaurant",
-      store: "Riverfront Tacos",
-      offer: "Buy One Get One Free (Entree)",
+      category: "Grocery",
+      store: "Publix",
+      offer:
+        "Buy One, Get One (microwavable meals). Look for packages with orange stickers. Scan barcode or give coupon code at the register to redeem.",
       valueText: "BOGO",
-      expires: "2026-06-15",
-      code: "TACOS-BOGO-1148",
-      tone: "cool",
-    },
-    {
-      id: "c-grocery-produce",
-      type: "coupon",
-      category: "Grocery",
-      store: "Knox Fresh Market",
-      offer: "$1.50 Off Produce (any 3 lbs+)",
-      valueText: "$1.50 OFF",
       expires: "2026-05-20",
-      code: "KFM-PRODUCE-150",
-      tone: "green",
+      code: "PLX-F5014-6261",
+      image: "./assets/Group 45.png",
+      tags: ["nutritional", "financial"],
     },
     {
-      id: "c-grocery-points",
+      id: "c-love-kitchen",
+      type: "coupon",
+      category: "Community",
+      store: "Love Kitchen",
+      offer:
+        "Weekly supply packages: meal prep, clothing, and hygiene. Limited — show up early. Please sign in upon arrival.",
+      valueText: "Weekly Supplies",
+      expires: "2026-05-20",
+      code: "LKN-F5014-5261",
+      image: "./assets/Group 48.png",
+      tags: ["nutritional", "housing", "financial"],
+    },
+    {
+      id: "c-whole-foods",
       type: "coupon",
       category: "Grocery",
-      store: "HealthyCart Grocery",
-      offer: "Double Points on Healthy Items",
-      valueText: "2× POINTS",
-      expires: "2026-06-01",
-      code: "HC-2X-HEALTHY-9002",
-      tone: "purple",
+      store: "Whole Foods",
+      offer: "$5.50 off all produce purchases (see terms on coupon).",
+      valueText: "$5.50 Off",
+      expires: "2026-05-20",
+      code: "WLF-F5014-5261",
+      image: "./assets/Group 46.png",
+      tags: ["nutritional", "financial"],
+    },
+    {
+      id: "c-brenz-pizza",
+      type: "coupon",
+      category: "Restaurant",
+      store: "Brenz Pizza Co.",
+      offer: "Free personal pies from 12pm till 6pm. Dependent on Brenz location (check before placing order).",
+      valueText: "Free Meal",
+      expires: "2026-05-20",
+      code: "BPC-F5014-5261",
+      image: "./assets/Group 47.png",
+      tags: ["nutritional", "financial"],
+    },
+    {
+      id: "c-kroger-points",
+      type: "coupon",
+      category: "Grocery",
+      store: "Kroger",
+      offer:
+        "5× points with a purchase of fruits, veggies, whole grains, protein, and healthy fats. Show coupon at register to redeem.",
+      valueText: "×5 Points",
+      expires: "2026-05-20",
+      code: "KRG-F5014-5261",
+      image: "./assets/Group 49.png",
+      tags: ["nutritional", "financial"],
     },
     {
       id: "l-nutritionist-followup",
@@ -85,6 +123,7 @@
         "Bring: a quick list of your go‑to meals and any foods you want to avoid.",
         "— Nutrition Team",
       ],
+      tags: ["nutritional"],
     },
     {
       id: "l-snap-notice",
@@ -99,33 +138,30 @@
         "Not approved: hot prepared foods (in most cases), alcohol, tobacco, vitamins/supplements, and non‑food household items.",
         "If you have questions, contact your caseworker or visit your state benefits portal.",
       ],
+      tags: ["financial"],
     },
   ];
 
   function couponCard(item) {
-    const exp = formatDate(item.expires);
+    const src = couponImageSrc(item.image);
+    const aria = `${item.store} coupon — ${item.valueText}`;
     return `
-      <button class="mail-card mail-card--coupon tone-${escapeHtml(item.tone)}" type="button" data-mail-id="${escapeHtml(
-        item.id,
-      )}" role="listitem" aria-label="${escapeHtml(item.store)} coupon">
-        <div class="coupon-top">
-          <div class="coupon-brand">
-            <div class="coupon-logo" aria-hidden="true"></div>
-            <div class="coupon-store">${escapeHtml(item.store)}</div>
-          </div>
-          <div class="coupon-scissors" aria-hidden="true">✂</div>
-        </div>
-
-        <div class="coupon-value">${escapeHtml(item.valueText)}</div>
-        <div class="coupon-offer">${escapeHtml(item.offer)}</div>
-
-        <div class="coupon-foot">
-          <div class="coupon-meta">
-            <span class="coupon-chip">${escapeHtml(item.category)}</span>
-            <span class="coupon-exp">Expires ${escapeHtml(exp)}</span>
-          </div>
-          <div class="coupon-code">${escapeHtml(item.code)}</div>
-        </div>
+      <button
+        class="mail-card mail-card--coupon mail-card--coupon--ticket"
+        type="button"
+        data-mail-id="${escapeAttr(item.id)}"
+        role="listitem"
+        aria-label="${escapeAttr(aria)}"
+      >
+        <img
+          class="coupon-ticket-img"
+          src="${escapeAttr(src)}"
+          alt=""
+          width="320"
+          height="180"
+          loading="lazy"
+          decoding="async"
+        />
       </button>
     `;
   }
@@ -153,8 +189,17 @@
     `;
   }
 
-  function renderList(root) {
-    root.innerHTML = MAIL.map((m) => (m.type === "coupon" ? couponCard(m) : letterCard(m))).join("");
+  function getMailForFilters(applied) {
+    if (!applied.size) return MAIL;
+    return MAIL.filter((m) => {
+      const tags = Array.isArray(m.tags) ? m.tags : [];
+      return tags.some((t) => applied.has(t));
+    });
+  }
+
+  function renderList(root, applied) {
+    const items = getMailForFilters(applied);
+    root.innerHTML = items.map((m) => (m.type === "coupon" ? couponCard(m) : letterCard(m))).join("");
   }
 
   function main() {
@@ -163,6 +208,12 @@
 
     const walletDialog = $('dialog[data-modal-root="coupon-wallet"]');
     const letterDialog = $('dialog[data-modal-root="letter-view"]');
+    const filterDialog = $('dialog[data-modal-root="mailbox-filter"]');
+
+    const filterBtn = $("#mailbox-filter-btn");
+    const filterApply = $("#mailbox-filter-apply");
+    const filterReset = $("#mailbox-filter-reset");
+    const filterPills = Array.from(document.querySelectorAll("[data-filter]"));
 
     const walletStore = $("#wallet-store");
     const walletOffer = $("#wallet-offer");
@@ -176,7 +227,69 @@
     const letterMeta = $("#letter-meta");
     const letterBody = $("#letter-body");
 
-    renderList(list);
+    const appliedFilters = new Set();
+    let pendingFilters = new Set();
+
+    function syncPillsFromPending() {
+      for (const pill of filterPills) {
+        const key = pill.getAttribute("data-filter");
+        pill.classList.toggle("is-selected", pendingFilters.has(key));
+      }
+    }
+
+    function refreshAppliedUI() {
+      renderList(list, appliedFilters);
+      if (filterBtn) filterBtn.classList.toggle("is-active", appliedFilters.size > 0);
+    }
+
+    function openFilterPanel() {
+      pendingFilters = new Set(appliedFilters);
+      syncPillsFromPending();
+      openDialog(filterDialog);
+    }
+
+    if (filterBtn) {
+      filterBtn.addEventListener("click", (e) => {
+        e.preventDefault?.();
+        openFilterPanel();
+      });
+    }
+
+    for (const pill of filterPills) {
+      pill.addEventListener("click", () => {
+        const key = pill.getAttribute("data-filter");
+        if (!key) return;
+        if (pendingFilters.has(key)) pendingFilters.delete(key);
+        else pendingFilters.add(key);
+        syncPillsFromPending();
+      });
+    }
+
+    if (filterReset) {
+      filterReset.addEventListener("click", () => {
+        pendingFilters = new Set();
+        syncPillsFromPending();
+      });
+    }
+
+    if (filterApply) {
+      filterApply.addEventListener("click", () => {
+        appliedFilters.clear();
+        for (const k of pendingFilters) appliedFilters.add(k);
+        refreshAppliedUI();
+        closeDialog(filterDialog);
+      });
+    }
+
+    if (filterDialog) {
+      filterDialog.addEventListener("close", () => {
+        // If user dismisses, don't change applied filters.
+        pendingFilters = new Set(appliedFilters);
+        syncPillsFromPending();
+      });
+    }
+
+    refreshAppliedUI();
 
     list.addEventListener("click", (e) => {
       const card = e.target?.closest?.("[data-mail-id]");
