@@ -52,6 +52,7 @@
     if (!p) return;
     if (p.name) setText("[data-profile-name]", p.name);
     if (p.email) setText("[data-profile-email]", p.email);
+    if (p.location) setText("[data-profile-location]", p.location);
     if (p.picture) {
       setPhoto(p.picture);
       try {
@@ -65,7 +66,6 @@
   function clearProfile() {
     setText("[data-profile-name]", "Anonymous");
     setText("[data-profile-email]", "Not signed in");
-    // Don't clear location or user-chosen photo unless you want full reset.
     try {
       localStorage.removeItem(PROFILE_KEY);
     } catch {
@@ -111,12 +111,36 @@
   function bindSignout() {
     const btn = q("[data-action='google-signout']");
     if (!btn) return;
-    btn.addEventListener("click", () => clearProfile());
+    btn.addEventListener("click", () => {
+      clearProfile();
+      // Return to entry/sign-in page
+      window.location.href = "index.html";
+    });
+  }
+
+  function bindProfileEdit() {
+    const btn = q("[data-action='profile-edit']");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      const current = loadProfile() || {};
+      const currentName = q("[data-profile-name]")?.textContent?.trim() || current.name || "";
+      const currentLoc = q("[data-profile-location]")?.textContent?.trim() || current.location || "";
+
+      const nextName = window.prompt("Edit name", currentName);
+      if (nextName === null) return;
+      const nextLoc = window.prompt("Edit location", currentLoc);
+      if (nextLoc === null) return;
+
+      const updated = { ...current, name: String(nextName || "").trim(), location: String(nextLoc || "").trim() };
+      saveProfile(updated);
+      applyProfile(updated);
+    });
   }
 
   function main() {
     applyProfile(loadProfile());
     bindSignout();
+    bindProfileEdit();
 
     // GIS script loads async, so poll a few times.
     let tries = 0;

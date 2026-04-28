@@ -5,19 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Your Plate</title>
     <meta name="description" content="Public Food Utility — welcome" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Playfair+Display:ital,wght@0,600;1,500&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
       :root {
-        --gingham-base: #fef6f4;
-        --gingham-stripe: rgba(168, 72, 82, 0.28);
-        --gingham-stripe-2: rgba(168, 72, 82, 0.18);
-        --plate-size: 220px;
-        --plate-r: 110px;
+        /* Match profile drawer gingham stripe family */
+        --gingham-base: rgba(255, 244, 214, 0.92);
+        --gingham-stripe: rgba(204, 182, 221, 0.35);
+        --gingham-stripe-2: rgba(255, 244, 214, 0.35);
+        --plate-size: 56px; /* bottle-cap scale */
+        --plate-r: 28px;
         --cta-h: 96px;
         --ink: #3a2a2c;
         --cta-bg: #a84852;
@@ -26,8 +23,8 @@
 
       @media (max-width: 520px) {
         :root {
-          --plate-size: 160px;
-          --plate-r: 80px;
+          --plate-size: 44px;
+          --plate-r: 22px;
         }
       }
 
@@ -35,40 +32,57 @@
         box-sizing: border-box;
       }
 
-      html,
       body {
-        margin: 0;
-        height: 100%;
-        overflow: hidden;
-        touch-action: manipulation;
         -webkit-tap-highlight-color: transparent;
       }
 
+      .phone.splash-phone {
+        background: var(--gingham-base);
+      }
+
       .splash {
-        position: fixed;
+        position: absolute;
         inset: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
-        padding: calc(16px + env(safe-area-inset-top, 0px)) 20px calc(20px + env(safe-area-inset-bottom, 0px));
+        padding: 22px 20px 18px;
         color: var(--ink);
-        font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        font-family: var(--font-body);
       }
 
       /* Gingham tablecloth — layered checks (seamless) */
       .gingham {
-        position: fixed;
+        position: absolute;
         inset: 0;
         z-index: 0;
         background-color: var(--gingham-base);
         background-image:
-          linear-gradient(90deg, var(--gingham-stripe-2) 50%, transparent 50%),
-          linear-gradient(0deg, var(--gingham-stripe-2) 50%, transparent 50%),
-          linear-gradient(90deg, var(--gingham-stripe) 50%, transparent 50%),
-          linear-gradient(0deg, var(--gingham-stripe) 50%, transparent 50%);
-        background-size: 40px 40px, 40px 40px, 20px 20px, 20px 20px;
-        background-position: 0 0, 0 0, 0 0, 10px 10px;
+          linear-gradient(
+            90deg,
+            var(--gingham-stripe) 0,
+            var(--gingham-stripe) 25%,
+            var(--gingham-stripe-2) 25%,
+            var(--gingham-stripe-2) 50%,
+            var(--gingham-stripe) 50%,
+            var(--gingham-stripe) 75%,
+            var(--gingham-stripe-2) 75%,
+            var(--gingham-stripe-2) 100%
+          ),
+          linear-gradient(
+            0deg,
+            var(--gingham-stripe) 0,
+            var(--gingham-stripe) 25%,
+            var(--gingham-stripe-2) 25%,
+            var(--gingham-stripe-2) 50%,
+            var(--gingham-stripe) 50%,
+            var(--gingham-stripe) 75%,
+            var(--gingham-stripe-2) 75%,
+            var(--gingham-stripe-2) 100%
+          );
+        background-size: 34px 34px;
+        background-blend-mode: multiply;
         filter: url(#fabricDistort);
         will-change: filter;
       }
@@ -82,28 +96,60 @@
 
       .topline h1 {
         margin: 0 0 6px;
-        font-size: clamp(1.55rem, 4.3vw, 2.1rem);
-        font-weight: 600;
-        letter-spacing: 0.02em;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
         line-height: 1.2;
+        font-family: "Capriola", var(--font-body);
       }
 
       .topline p {
         margin: 0;
-        font-family: "Caveat", "Segoe Print", cursive;
-        font-size: clamp(1.35rem, 3.8vw, 1.75rem);
-        color: rgba(58, 42, 44, 0.85);
+        font-size: 16px;
+        color: rgba(58, 42, 44, 0.78);
       }
 
       /* Plate stage — JS sets transform */
       .plate-stage {
-        position: fixed;
+        position: absolute;
         left: 0;
         top: 0;
         width: 1px;
         height: 1px;
         z-index: 3;
         pointer-events: none;
+      }
+
+      .utensils {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1px;
+        height: 1px;
+        pointer-events: none;
+        opacity: 0;
+        transform: translate(-50%, -50%);
+        transition: opacity 180ms ease;
+        filter: drop-shadow(0 10px 16px rgba(40, 20, 25, 0.14));
+      }
+
+      .utensils.is-visible {
+        opacity: 1;
+      }
+
+      .utensils model-viewer {
+        width: 92px;
+        height: 240px;
+        display: block;
+        pointer-events: none;
+      }
+
+      .utensils.utensils-left {
+        transform: translate(-50%, -50%) rotate(-12deg);
+      }
+
+      .utensils.utensils-right {
+        transform: translate(-50%, -50%) rotate(12deg);
       }
 
       .plate-hit {
@@ -134,10 +180,11 @@
         pointer-events: none;
       }
 
-      .plate-visual svg {
-        display: block;
+      .plate-visual model-viewer {
         width: 100%;
-        height: auto;
+        height: 100%;
+        display: block;
+        pointer-events: none;
       }
 
       .cta-wrap {
@@ -159,10 +206,10 @@
         border-radius: 999px;
         background: var(--cta-bg);
         color: var(--cta-ink);
-        font-family: "Playfair Display", Georgia, serif;
+        font-family: var(--font-body);
         font-size: 1.05rem;
         font-weight: 600;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.02em;
         text-decoration: none;
         text-align: center;
         box-shadow: 0 4px 0 rgba(60, 30, 35, 0.18), 0 10px 24px rgba(60, 30, 35, 0.12);
@@ -196,67 +243,46 @@
       </defs>
     </svg>
 
-    <div class="gingham" id="gingham" aria-hidden="true"></div>
+    <main class="screen" data-screen="splash">
+      <div class="phone splash-phone" role="application" aria-label="Splash">
+        <div class="gingham" id="gingham" aria-hidden="true"></div>
 
-    <div class="splash">
-      <header class="topline">
-        <h1>Your Plate</h1>
-        <p>Good food, close by — let’s find your next meal.</p>
-      </header>
+        <div class="splash">
+          <header class="topline">
+            <h1>Your Plate</h1>
+            <p>Good food, close by — let’s find your next meal.</p>
+          </header>
 
-      <div class="plate-stage" id="plateStage" aria-hidden="true">
-        <div class="plate-hit" id="plateHit" role="img" aria-label="Draggable plate"></div>
-        <div class="plate-visual" id="plateVisual">
-          <svg viewBox="0 0 220 220" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <radialGradient id="plateWell" cx="42%" cy="38%" r="58%">
-                <stop offset="0%" stop-color="#ffffff" />
-                <stop offset="55%" stop-color="#f3f4f7" />
-                <stop offset="100%" stop-color="#e2e5ec" />
-              </radialGradient>
-              <radialGradient id="plateRim" cx="50%" cy="45%" r="65%">
-                <stop offset="0%" stop-color="#fafaf8" />
-                <stop offset="75%" stop-color="#ecebe8" />
-                <stop offset="100%" stop-color="#ddd9d3" />
-              </radialGradient>
-              <filter id="rimShade" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="rgba(0,0,0,0.12)" />
-              </filter>
-            </defs>
-            <!-- Elliptical contact shadow on "cloth" -->
-            <ellipse cx="110" cy="188" rx="88" ry="17" fill="rgba(35,25,28,0.14)" />
-            <!-- Outer rim -->
-            <circle cx="110" cy="110" r="101" fill="url(#plateRim)" filter="url(#rimShade)" />
-            <!-- Decorative thin ring -->
-            <circle
-              cx="110"
-              cy="110"
-              r="93"
-              fill="none"
-              stroke="#c9ccd4"
-              stroke-width="2.25"
-              opacity="0.9"
-            />
-            <circle cx="110" cy="110" r="93" fill="none" stroke="#fdfcfa" stroke-width="0.9" opacity="0.85" />
-            <!-- Inner well -->
-            <circle cx="110" cy="110" r="74" fill="url(#plateWell)" stroke="rgba(0,0,0,0.05)" stroke-width="1.1" />
-            <!-- Rim lip highlight -->
-            <circle cx="110" cy="110" r="101" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="3" opacity="0.35" />
-          </svg>
+          <div class="plate-stage" id="plateStage" aria-hidden="true">
+            <div class="plate-hit" id="plateHit" role="img" aria-label="Draggable plate"></div>
+            <div class="plate-visual" id="plateVisual">
+              <model-viewer
+                id="set3d"
+                src="./assets/models/the_set.glb"
+                camera-controls="false"
+                interaction-prompt="none"
+                environment-image="neutral"
+                exposure="1"
+                shadow-intensity="0.45"
+                disable-zoom
+                disable-pan
+              ></model-viewer>
+            </div>
+          </div>
+
+          <footer class="cta-wrap">
+            <a class="cta" id="ctaEat" href="homepage.html">Let’s Eat</a>
+          </footer>
         </div>
       </div>
-
-      <footer class="cta-wrap">
-        <a class="cta" id="ctaEat" href="homepage.html">Let’s Eat</a>
-      </footer>
-    </div>
+    </main>
 
     <script>
       (function () {
         "use strict";
 
-        const LERP = 0.15;
-        const FRICTION = 0.88;
+        const LERP = 0.1;
+        const FRICTION = 0.93;
         const BOUNCE = 0.4;
         const MAX_TILT_DEG = 12;
         const ANG_SPRING = 0.22;
@@ -264,15 +290,24 @@
         const IDLE_ROT_DEG = 2;
         const IDLE_PERIOD_MS = 3000;
 
+        const phone = document.querySelector(".phone.splash-phone");
         const plateStage = document.getElementById("plateStage");
         const plateHit = document.getElementById("plateHit");
         const plateVisual = document.getElementById("plateVisual");
         const dispMap = document.querySelector("#fabricDistort feDisplacementMap");
 
-        let px = typeof window.innerWidth === "number" ? window.innerWidth * 0.5 : 200;
-        let py = typeof window.innerHeight === "number" ? window.innerHeight * 0.44 : 300;
+        function getStageRect() {
+          const fallback = { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
+          const r = phone?.getBoundingClientRect?.();
+          if (!r || !Number.isFinite(r.width) || !Number.isFinite(r.height)) return fallback;
+          return r;
+        }
+
+        const r0 = getStageRect();
+        let px = r0.width * 0.5;
+        let py = -120; // start above, slide into center
         let tx = px;
-        let ty = py;
+        let ty = r0.height * 0.5;
         let vx = 0;
         let vy = 0;
         let dragging = false;
@@ -286,13 +321,18 @@
         let chaseTiltDeg = 0;
         let tiltDeg = 0;
         let angVelDeg = 0;
+        let intro = true;
+        let introStart = performance.now();
 
         /** @type {number} */
         let t0 = performance.now();
 
         function plateRadiusPx() {
           const s = plateVisual.querySelector("svg");
-          if (!s) return Math.min(window.innerWidth, window.innerHeight) * 0.22;
+          if (!s) {
+            const rr = getStageRect();
+            return Math.min(rr.width, rr.height) * 0.22;
+          }
           const rect = s.getBoundingClientRect();
           return Math.max(rect.width, rect.height) * 0.5;
         }
@@ -344,10 +384,31 @@
           t0 = now;
 
           const r = plateRadiusPx();
-          const W = window.innerWidth;
-          const H = window.innerHeight;
+          const stage = getStageRect();
+          const W = stage.width;
+          const H = stage.height;
           const margin = 8;
           const bottomReserve = 110;
+
+          if (intro) {
+            const elapsed = now - introStart;
+            const dur = 650;
+            const t = Math.min(1, elapsed / dur);
+            const ease = 1 - Math.pow(1 - t, 3);
+            const targetY = H * 0.5;
+            const startY = -120;
+            py = startY + (targetY - startY) * ease;
+            px = W * 0.5;
+            tx = px;
+            ty = py;
+            vx = vy = 0;
+            chaseTiltDeg *= 0.9;
+            setFabricDisplacement(0, false);
+            if (t >= 1) intro = false;
+            placePlate();
+            pid = window.requestAnimationFrame(step);
+            return;
+          }
 
           if (dragging) {
             tx = clamp(tx, r + margin, W - r - margin);
@@ -412,13 +473,15 @@
         function onDown(e) {
           if (e.button !== undefined && e.button !== 0) return;
           if (e.target && typeof e.target.closest === "function" && e.target.closest("#ctaEat")) return;
+          intro = false;
           dragging = true;
           activePointerId = e.pointerId;
           try {
             plateHit.setPointerCapture(e.pointerId);
           } catch (_) {}
-          tx = e.clientX;
-          ty = e.clientY;
+          const stage = getStageRect();
+          tx = e.clientX - stage.left;
+          ty = e.clientY - stage.top;
           vx = vy = 0;
           prevPx = px;
           prevPy = py;
@@ -428,8 +491,9 @@
         /** @param {PointerEvent} e */
         function onMove(e) {
           if (!dragging || e.pointerId !== activePointerId) return;
-          tx = e.clientX;
-          ty = e.clientY;
+          const stage = getStageRect();
+          tx = e.clientX - stage.left;
+          ty = e.clientY - stage.top;
         }
 
         /** @param {PointerEvent} e */
@@ -442,10 +506,11 @@
               plateHit.releasePointerCapture(e.pointerId);
             }
           } catch (_) {}
-          const lx = clamp(tx, plateRadiusPx() + 8, window.innerWidth - plateRadiusPx() - 8);
-          const ly = clamp(ty, plateRadiusPx() + 8, window.innerHeight - plateRadiusPx() - 118);
-          vx = (lx - px) * 6.8;
-          vy = (ly - py) * 6.8;
+          const stage = getStageRect();
+          const lx = clamp(tx, plateRadiusPx() + 8, stage.width - plateRadiusPx() - 8);
+          const ly = clamp(ty, plateRadiusPx() + 8, stage.height - plateRadiusPx() - 118);
+          vx = (lx - px) * 5.1;
+          vy = (ly - py) * 5.1;
           vx += (tx - lx) * 0.08;
           vy += (ty - ly) * 0.08;
         }
@@ -458,8 +523,9 @@
         window.addEventListener(
           "resize",
           () => {
-            px = clamp(px, plateRadiusPx() + 8, window.innerWidth - plateRadiusPx() - 8);
-            py = clamp(py, plateRadiusPx() + 8, window.innerHeight - plateRadiusPx() - 118);
+            const stage = getStageRect();
+            px = clamp(px, plateRadiusPx() + 8, stage.width - plateRadiusPx() - 8);
+            py = clamp(py, plateRadiusPx() + 8, stage.height - plateRadiusPx() - 118);
             tx = px;
             ty = py;
           },
