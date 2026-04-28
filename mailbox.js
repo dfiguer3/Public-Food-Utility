@@ -2,6 +2,8 @@
   "use strict";
 
   const $ = (sel, root = document) => root.querySelector(sel);
+  // Bump this string any time you replace coupon PNGs to force reloads.
+  const ASSET_VERSION = "2026-04-27-2212";
 
   function escapeHtml(s) {
     return String(s)
@@ -38,7 +40,12 @@
   function couponImageSrc(path) {
     if (!path) return "";
     try {
-      return new URL(path, document.baseURI).href;
+      const url = new URL(path, document.baseURI);
+      // Avoid stale cached PNGs during iterative design updates.
+      if (url.pathname.toLowerCase().includes("/assets/") && url.pathname.toLowerCase().endsWith(".png")) {
+        url.searchParams.set("v", ASSET_VERSION);
+      }
+      return url.href;
     } catch {
       return String(path).replace(/ /g, "%20");
     }
@@ -55,7 +62,7 @@
       valueText: "BOGO",
       expires: "2026-05-20",
       code: "PLX-F5014-6261",
-      image: "./assets/Group 45.png",
+      image: "./assets/Group 52.png",
       tags: ["nutritional", "financial"],
     },
     {
@@ -68,7 +75,7 @@
       valueText: "Weekly Supplies",
       expires: "2026-05-20",
       code: "LKN-F5014-5261",
-      image: "./assets/Group 48.png",
+      image: "./assets/Group 55.png",
       tags: ["nutritional", "housing", "financial"],
     },
     {
@@ -80,7 +87,7 @@
       valueText: "$5.50 Off",
       expires: "2026-05-20",
       code: "WLF-F5014-5261",
-      image: "./assets/Group 46.png",
+      image: "./assets/Group 53.png",
       tags: ["nutritional", "financial"],
     },
     {
@@ -92,7 +99,7 @@
       valueText: "Free Meal",
       expires: "2026-05-20",
       code: "BPC-F5014-5261",
-      image: "./assets/Group 47.png",
+      image: "./assets/Group 56.png",
       tags: ["nutritional", "financial"],
     },
     {
@@ -105,7 +112,7 @@
       valueText: "×5 Points",
       expires: "2026-05-20",
       code: "KRG-F5014-5261",
-      image: "./assets/Group 49.png",
+      image: "./assets/Group 54.png",
       tags: ["nutritional", "financial"],
     },
     {
@@ -221,6 +228,7 @@
     const walletExp = $("#wallet-exp");
     const walletCodeText = $("#wallet-code-text");
     const walletAction = $("[data-wallet-action]");
+    const walletTicketImg = $("#wallet-ticket-img");
 
     const letterFrom = $("#letter-from");
     const letterSubject = $("#letter-subject");
@@ -299,6 +307,14 @@
       if (!item) return;
 
       if (item.type === "coupon") {
+        if (walletTicketImg) {
+          walletTicketImg.src = couponImageSrc(item.image);
+          walletTicketImg.alt = `${item.store} coupon`;
+          walletTicketImg.width = 333;
+          walletTicketImg.height = 209;
+          walletTicketImg.loading = "eager";
+          walletTicketImg.decoding = "async";
+        }
         if (walletStore) walletStore.textContent = item.store;
         if (walletOffer) walletOffer.textContent = item.offer;
         if (walletValue) walletValue.textContent = item.valueText;

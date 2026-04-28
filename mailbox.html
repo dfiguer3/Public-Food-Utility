@@ -88,7 +88,7 @@
         </header>
 
         <nav class="puf-float-nav" aria-label="Primary navigation">
-          <a href="index.html" aria-label="Nearby">
+          <a href="homepage.html" aria-label="Nearby">
             <img alt="" width="49" height="49" src="https://www.figma.com/api/mcp/asset/94b2a2af-cf45-4d6f-9259-20340ca49569" />
           </a>
           <a href="snap.html" aria-label="SNAP">
@@ -127,7 +127,6 @@
                     <span class="mailbox-filter-dot" aria-hidden="true"></span>
                   </button>
 
-                  <span class="mailbox-subtitle" aria-hidden="true">Coupons & notices</span>
                   <button class="mailbox-info-btn" type="button" data-modal="mailbox-info" aria-label="Mailbox info">
                     <span class="mailbox-info-icon" aria-hidden="true">i</span>
                   </button>
@@ -151,7 +150,7 @@
             </button>
           </div>
           <nav class="modal-nav" aria-label="Menu links">
-            <a href="index.html">Home</a>
+            <a href="homepage.html">Home</a>
             <a href="map.html">Map</a>
             <a href="snap.html">SNAP</a>
             <a href="support.html">Support</a>
@@ -227,6 +226,10 @@
     <dialog class="modal modal-wallet" data-modal-root="coupon-wallet" aria-label="Coupon wallet">
       <form method="dialog" class="modal-backdrop modal-backdrop--center">
         <div class="wallet-sheet" role="document" aria-label="Coupon wallet card">
+          <div class="wallet-ticket" aria-label="Coupon preview">
+            <img id="wallet-ticket-img" class="wallet-ticket-img" alt="" />
+          </div>
+
           <div class="wallet-top">
             <div class="wallet-brand">
               <div class="wallet-logo" aria-hidden="true"></div>

@@ -2,159 +2,480 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Home • Public Food Utility</title>
-    <meta name="description" content="Public Food Utility — Home" />
-    <link rel="stylesheet" href="./styles.css" />
-    <script>
-      // Mapbox token is supplied by local `map-config.js` (gitignored).
-      window.MAPBOX_ACCESS_TOKEN = window.MAPBOX_ACCESS_TOKEN || "";
-    </script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script defer src="./map-config.js"></script>
-    <script defer src="./script.js"></script>
-    <script defer src="./theme.js"></script>
-    <script defer src="./profile-drawer.js"></script>
-    <script defer src="./profile-image.js"></script>
-    <script defer src="./google-auth.js"></script>
-    <script defer src="./home-events.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Your Plate</title>
+    <meta name="description" content="Public Food Utility — welcome" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Playfair+Display:ital,wght@0,600;1,500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --gingham-base: #fef6f4;
+        --gingham-stripe: rgba(168, 72, 82, 0.28);
+        --gingham-stripe-2: rgba(168, 72, 82, 0.18);
+        --plate-size: 220px;
+        --plate-r: 110px;
+        --cta-h: 96px;
+        --ink: #3a2a2c;
+        --cta-bg: #a84852;
+        --cta-ink: #fffaf8;
+      }
+
+      @media (max-width: 520px) {
+        :root {
+          --plate-size: 160px;
+          --plate-r: 80px;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .splash {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: calc(16px + env(safe-area-inset-top, 0px)) 20px calc(20px + env(safe-area-inset-bottom, 0px));
+        color: var(--ink);
+        font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+      }
+
+      /* Gingham tablecloth — layered checks (seamless) */
+      .gingham {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background-color: var(--gingham-base);
+        background-image:
+          linear-gradient(90deg, var(--gingham-stripe-2) 50%, transparent 50%),
+          linear-gradient(0deg, var(--gingham-stripe-2) 50%, transparent 50%),
+          linear-gradient(90deg, var(--gingham-stripe) 50%, transparent 50%),
+          linear-gradient(0deg, var(--gingham-stripe) 50%, transparent 50%);
+        background-size: 40px 40px, 40px 40px, 20px 20px, 20px 20px;
+        background-position: 0 0, 0 0, 0 0, 10px 10px;
+        filter: url(#fabricDistort);
+        will-change: filter;
+      }
+
+      .topline {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        max-width: 22rem;
+      }
+
+      .topline h1 {
+        margin: 0 0 6px;
+        font-size: clamp(1.55rem, 4.3vw, 2.1rem);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        line-height: 1.2;
+      }
+
+      .topline p {
+        margin: 0;
+        font-family: "Caveat", "Segoe Print", cursive;
+        font-size: clamp(1.35rem, 3.8vw, 1.75rem);
+        color: rgba(58, 42, 44, 0.85);
+      }
+
+      /* Plate stage — JS sets transform */
+      .plate-stage {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 1px;
+        height: 1px;
+        z-index: 3;
+        pointer-events: none;
+      }
+
+      .plate-hit {
+        position: absolute;
+        width: var(--plate-size);
+        height: var(--plate-size);
+        left: 0;
+        top: 0;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        pointer-events: auto;
+        touch-action: none;
+        cursor: grab;
+      }
+
+      .plate-hit:active {
+        cursor: grabbing;
+      }
+
+      .plate-visual {
+        position: absolute;
+        width: var(--plate-size);
+        height: var(--plate-size);
+        left: 0;
+        top: 0;
+        transform: translate(-50%, -50%);
+        filter: drop-shadow(0 18px 22px rgba(40, 20, 25, 0.18));
+        pointer-events: none;
+      }
+
+      .plate-visual svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .cta-wrap {
+        position: relative;
+        z-index: 4;
+        width: 100%;
+        max-width: 22rem;
+        padding-top: 8px;
+      }
+
+      .cta {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 52px;
+        padding: 14px 22px;
+        border: none;
+        border-radius: 999px;
+        background: var(--cta-bg);
+        color: var(--cta-ink);
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 1.05rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-decoration: none;
+        text-align: center;
+        box-shadow: 0 4px 0 rgba(60, 30, 35, 0.18), 0 10px 24px rgba(60, 30, 35, 0.12);
+        transition: transform 0.12s ease, box-shadow 0.12s ease;
+      }
+
+      .cta:hover {
+        filter: brightness(1.04);
+      }
+
+      .cta:active {
+        transform: translateY(2px);
+        box-shadow: 0 2px 0 rgba(60, 30, 35, 0.16), 0 6px 14px rgba(60, 30, 35, 0.1);
+      }
+
+      .svg-filters {
+        position: absolute;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+      }
+    </style>
   </head>
-  <body class="app">
-    <main class="screen" data-screen="home">
-      <div class="phone home-frame" role="application" aria-label="Public Food Utility">
-        <div class="profile-backdrop" data-profile-backdrop aria-hidden="true"></div>
-        <section
-          class="profile-drawer"
-          data-profile-drawer
-          data-peek="56"
-          data-open-ratio="0.75"
-          role="dialog"
-          aria-label="Profile drawer"
-          aria-hidden="true"
-        >
-          <div class="profile-drawer-content" aria-label="Profile content">
-            <button class="profile-avatar-edit" type="button" data-action="edit-profile-photo" aria-label="Change photo">
-              Change
-            </button>
-            <input
-              class="profile-avatar-input"
-              type="file"
-              accept="image/*"
-              data-profile-photo-input
-              aria-label="Upload profile photo"
+  <body>
+    <svg class="svg-filters" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id="fabricDistort" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.014" numOctaves="2" seed="17" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </defs>
+    </svg>
+
+    <div class="gingham" id="gingham" aria-hidden="true"></div>
+
+    <div class="splash">
+      <header class="topline">
+        <h1>Your Plate</h1>
+        <p>Good food, close by — let’s find your next meal.</p>
+      </header>
+
+      <div class="plate-stage" id="plateStage" aria-hidden="true">
+        <div class="plate-hit" id="plateHit" role="img" aria-label="Draggable plate"></div>
+        <div class="plate-visual" id="plateVisual">
+          <svg viewBox="0 0 220 220" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="plateWell" cx="42%" cy="38%" r="58%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="55%" stop-color="#f3f4f7" />
+                <stop offset="100%" stop-color="#e2e5ec" />
+              </radialGradient>
+              <radialGradient id="plateRim" cx="50%" cy="45%" r="65%">
+                <stop offset="0%" stop-color="#fafaf8" />
+                <stop offset="75%" stop-color="#ecebe8" />
+                <stop offset="100%" stop-color="#ddd9d3" />
+              </radialGradient>
+              <filter id="rimShade" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="rgba(0,0,0,0.12)" />
+              </filter>
+            </defs>
+            <!-- Elliptical contact shadow on "cloth" -->
+            <ellipse cx="110" cy="188" rx="88" ry="17" fill="rgba(35,25,28,0.14)" />
+            <!-- Outer rim -->
+            <circle cx="110" cy="110" r="101" fill="url(#plateRim)" filter="url(#rimShade)" />
+            <!-- Decorative thin ring -->
+            <circle
+              cx="110"
+              cy="110"
+              r="93"
+              fill="none"
+              stroke="#c9ccd4"
+              stroke-width="2.25"
+              opacity="0.9"
             />
-
-            <div class="profile-plate">
-              <div class="profile-plate__rim"></div>
-              <div class="profile-plate__well"></div>
-              <div class="profile-plate__shine"></div>
-              <img
-                class="profile-plate-avatar"
-                alt="Profile photo"
-                data-profile-photo
-                src="https://www.figma.com/api/mcp/asset/a2c1075d-6915-4401-a952-4c5dcfec623a"
-              />
-            </div>
-
-            <div class="profile-plate-content">
-              <div class="sheet sheet-profile" aria-label="Profile details">
-                <h1 class="page-title">Profile</h1>
-                <div class="profile-row">
-                  <div class="profile-label">Name</div>
-                  <div class="profile-value" data-profile-name>Anonymous</div>
-                </div>
-                <div class="profile-row">
-                  <div class="profile-label">Location</div>
-                  <div class="profile-value" data-profile-location>Knoxville</div>
-                </div>
-                <div class="profile-row">
-                  <div class="profile-label">Account</div>
-                  <div class="profile-value" data-profile-email>Not signed in</div>
-                </div>
-
-                <div class="profile-auth">
-                  <div id="google-signin-btn" class="google-signin-btn" aria-label="Sign in with Google"></div>
-                  <button class="google-signout-btn" type="button" data-action="google-signout">Sign out</button>
-                  <div class="profile-auth-note">
-                    Google sign-in is used to fill your profile. (Prototype: stored on this device.)
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="profile-drawer-peek" data-profile-handle>
-            <div class="profile-drawer-handle" aria-hidden="true"></div>
-          </div>
-        </section>
-
-        <header class="home-header" aria-label="Header">
-          <button class="home-menu" type="button" data-modal="menu" aria-label="Menu">
-            <span class="home-dots" aria-hidden="true"><span aria-hidden="true"></span></span>
-          </button>
-
-          <div class="home-title" aria-label="App title">Your Plate</div>
-        </header>
-
-        <section class="home-sheet" aria-label="Bottom sheet">
-          <div class="home-sheet-scroll" aria-label="Sheet content">
-            <div class="home-section-row" aria-label="Section header">
-              <h1 class="home-heading">Nearby Events</h1>
-              <a class="home-map-btn" href="map.html" aria-label="Open map">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M8.6 5.2 3 3v15.8l5.6 2.2 6.8-2.2L21 21V5.2l-5.6-2.2-6.8 2.2Zm0 2.3v11.1L5 17.2V6.1l3.6 1.4Zm2 11.1V7.5l4.8-1.6v11.1l-4.8 1.6Zm6.8.6V8.1L19 6.8v11.1l-1.6 1.3Z"
-                  />
-                </svg>
-              </a>
-            </div>
-
-            <div id="home-events" class="home-events" aria-label="Nearby free food events"></div>
-
-            <div class="home-events-more" aria-label="Load more events">
-              <button id="home-events-more-btn" class="home-load-more" type="button">
-                Load more
-              </button>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
-
-    <nav class="puf-float-nav" aria-label="Primary navigation">
-      <a class="is-active" href="index.html" aria-current="page" aria-label="Nearby">
-        <img alt="" width="49" height="49" src="https://www.figma.com/api/mcp/asset/7a7a9b4a-eeca-40ba-974c-94fa8453cfeb" />
-      </a>
-      <a href="snap.html" aria-label="SNAP">
-        <img alt="" width="51" height="51" src="https://www.figma.com/api/mcp/asset/36b7826d-3153-4d38-9b04-decf16ce94bf" />
-      </a>
-      <a href="support.html" aria-label="Support">
-        <img alt="" width="48" height="48" src="https://www.figma.com/api/mcp/asset/e5a0c845-af77-45b2-a9f7-accc230ea2e5" />
-      </a>
-      <a href="mailbox.html" aria-label="Mailbox">
-        <img alt="" width="45" height="45" src="https://www.figma.com/api/mcp/asset/796b26d8-c4f9-494d-bdc5-3ff67b693229" />
-      </a>
-    </nav>
-
-    <dialog class="modal" data-modal-root="menu" aria-label="Menu">
-      <form method="dialog" class="modal-backdrop">
-        <div class="modal-sheet" role="document">
-          <div class="modal-head">
-            <div class="modal-title">Menu</div>
-            <button class="icon-btn" value="cancel" aria-label="Close">
-              <span class="icon icon-x" aria-hidden="true"></span>
-            </button>
-          </div>
-          <nav class="modal-nav" aria-label="Menu links">
-            <a href="index.html">Home</a>
-            <a href="map.html">Map</a>
-            <a href="mailbox.html">Mailbox</a>
-            <a href="snap.html">SNAP</a>
-            <a href="support.html">Support</a>
-            <a href="emergency.html">Emergency</a>
-            <a href="profile.html">Profile</a>
-          </nav>
+            <circle cx="110" cy="110" r="93" fill="none" stroke="#fdfcfa" stroke-width="0.9" opacity="0.85" />
+            <!-- Inner well -->
+            <circle cx="110" cy="110" r="74" fill="url(#plateWell)" stroke="rgba(0,0,0,0.05)" stroke-width="1.1" />
+            <!-- Rim lip highlight -->
+            <circle cx="110" cy="110" r="101" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="3" opacity="0.35" />
+          </svg>
         </div>
-      </form>
-    </dialog>
+      </div>
+
+      <footer class="cta-wrap">
+        <a class="cta" id="ctaEat" href="homepage.html">Let’s Eat</a>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        const LERP = 0.15;
+        const FRICTION = 0.88;
+        const BOUNCE = 0.4;
+        const MAX_TILT_DEG = 12;
+        const ANG_SPRING = 0.22;
+        const IDLE_BOB_PX = 4;
+        const IDLE_ROT_DEG = 2;
+        const IDLE_PERIOD_MS = 3000;
+
+        const plateStage = document.getElementById("plateStage");
+        const plateHit = document.getElementById("plateHit");
+        const plateVisual = document.getElementById("plateVisual");
+        const dispMap = document.querySelector("#fabricDistort feDisplacementMap");
+
+        let px = typeof window.innerWidth === "number" ? window.innerWidth * 0.5 : 200;
+        let py = typeof window.innerHeight === "number" ? window.innerHeight * 0.44 : 300;
+        let tx = px;
+        let ty = py;
+        let vx = 0;
+        let vy = 0;
+        let dragging = false;
+        let pid = /** @type {number | null} */ (null);
+        /** @type {number | null} */
+        let activePointerId = null;
+
+        let prevPx = px;
+        let prevPy = py;
+
+        let chaseTiltDeg = 0;
+        let tiltDeg = 0;
+        let angVelDeg = 0;
+
+        /** @type {number} */
+        let t0 = performance.now();
+
+        function plateRadiusPx() {
+          const s = plateVisual.querySelector("svg");
+          if (!s) return Math.min(window.innerWidth, window.innerHeight) * 0.22;
+          const rect = s.getBoundingClientRect();
+          return Math.max(rect.width, rect.height) * 0.5;
+        }
+
+        function setFabricDisplacement(speedPx, dragging_) {
+          if (!dispMap) return;
+          const base = dragging_ ? 12 : Math.min(6, speedPx * 0.1);
+          const scale = Math.min(26, Math.max(0, base + Math.min(speedPx * 0.42, dragging_ ? 10 : 0)));
+          dispMap.setAttribute("scale", scale.toFixed(2));
+        }
+
+        function clamp(v, lo, hi) {
+          return Math.max(lo, Math.min(hi, v));
+        }
+
+        function placePlate() {
+          plateStage.style.transform = "translate3d(" + px + "px," + py + "px,0)";
+          const idleT = performance.now();
+          const phase = idleT / IDLE_PERIOD_MS;
+          const bob = Math.sin(phase * Math.PI * 2) * IDLE_BOB_PX;
+          const idleWobble = Math.sin(phase * Math.PI * 2 * 1.07) * IDLE_ROT_DEG;
+          let animBob = dragging ? 0 : bob;
+          let idleRotContribution = dragging ? 0 : idleWobble;
+
+          let speed = Math.hypot(vx, vy);
+
+          /** @type number */
+          let tiltTarget = chaseTiltDeg;
+          if (dragging || speed > 0.35) {
+            tiltTarget = vx * 0.14 + vy * -0.08;
+          } else {
+            tiltTarget = tiltDeg * FRICTION * 0.92 + chaseTiltDeg * 0.08;
+          }
+          tiltTarget = clamp(tiltTarget + idleRotContribution + angVelDeg * 0.12, -MAX_TILT_DEG - 4, MAX_TILT_DEG + 4);
+          tiltDeg += (tiltTarget - tiltDeg) * ANG_SPRING;
+
+          if (!dragging && speed < 0.08) {
+            angVelDeg *= 0.86;
+            tiltDeg += (idleWobble - tiltDeg) * 0.08;
+          }
+
+          const deg = tiltDeg + animBob * 0.15;
+          plateVisual.style.transform =
+            "translate(-50%,-50%) translate3d(0," + animBob.toFixed(2) + "px,0) rotate(" + deg.toFixed(3) + "deg)";
+        }
+
+        function step(now) {
+          const dt = Math.min(32, now - t0);
+          t0 = now;
+
+          const r = plateRadiusPx();
+          const W = window.innerWidth;
+          const H = window.innerHeight;
+          const margin = 8;
+          const bottomReserve = 110;
+
+          if (dragging) {
+            tx = clamp(tx, r + margin, W - r - margin);
+            ty = clamp(ty, r + margin, H - r - margin - bottomReserve);
+            px += (tx - px) * LERP;
+            py += (ty - py) * LERP;
+            const dx = px - prevPx;
+            const dy = py - prevPy;
+            chaseTiltDeg = clamp(dx * 0.22 + dy * -0.12, -MAX_TILT_DEG, MAX_TILT_DEG);
+            prevPx = px;
+            prevPy = py;
+            const sp = Math.hypot(dx, dy) * (1000 / Math.max(1, dt));
+            setFabricDisplacement(sp, true);
+          } else {
+            px += vx;
+            py += vy;
+            vx *= FRICTION;
+            vy *= FRICTION;
+
+            if (px < r + margin) {
+              px = r + margin;
+              vx = -Math.abs(vx) * BOUNCE;
+            } else if (px > W - r - margin) {
+              px = W - r - margin;
+              vx = Math.abs(vx) * BOUNCE;
+            }
+            if (py < r + margin) {
+              py = r + margin;
+              vy = -Math.abs(vy) * BOUNCE;
+            } else if (py > H - r - margin - bottomReserve) {
+              py = H - r - margin - bottomReserve;
+              vy = Math.abs(vy) * BOUNCE;
+            }
+
+            const sp = Math.hypot(vx, vy);
+            chaseTiltDeg = clamp(vx * 0.16 + vy * -0.1, -MAX_TILT_DEG, MAX_TILT_DEG);
+            if (sp > 8) angVelDeg = chaseTiltDeg * 0.05;
+            else angVelDeg *= 0.9;
+
+            setFabricDisplacement(sp, false);
+          }
+
+          placePlate();
+          pid = window.requestAnimationFrame(step);
+        }
+
+        function stopLoop() {
+          if (pid != null) {
+            cancelAnimationFrame(pid);
+            pid = null;
+          }
+        }
+
+        function ensureLoop() {
+          if (pid == null) {
+            t0 = performance.now();
+            pid = window.requestAnimationFrame(step);
+          }
+        }
+
+        /** @param {PointerEvent} e */
+        function onDown(e) {
+          if (e.button !== undefined && e.button !== 0) return;
+          if (e.target && typeof e.target.closest === "function" && e.target.closest("#ctaEat")) return;
+          dragging = true;
+          activePointerId = e.pointerId;
+          try {
+            plateHit.setPointerCapture(e.pointerId);
+          } catch (_) {}
+          tx = e.clientX;
+          ty = e.clientY;
+          vx = vy = 0;
+          prevPx = px;
+          prevPy = py;
+          ensureLoop();
+        }
+
+        /** @param {PointerEvent} e */
+        function onMove(e) {
+          if (!dragging || e.pointerId !== activePointerId) return;
+          tx = e.clientX;
+          ty = e.clientY;
+        }
+
+        /** @param {PointerEvent} e */
+        function onUp(e) {
+          if (!dragging || e.pointerId !== activePointerId) return;
+          dragging = false;
+          activePointerId = null;
+          try {
+            if (plateHit.hasPointerCapture && plateHit.hasPointerCapture(e.pointerId)) {
+              plateHit.releasePointerCapture(e.pointerId);
+            }
+          } catch (_) {}
+          const lx = clamp(tx, plateRadiusPx() + 8, window.innerWidth - plateRadiusPx() - 8);
+          const ly = clamp(ty, plateRadiusPx() + 8, window.innerHeight - plateRadiusPx() - 118);
+          vx = (lx - px) * 6.8;
+          vy = (ly - py) * 6.8;
+          vx += (tx - lx) * 0.08;
+          vy += (ty - ly) * 0.08;
+        }
+
+        plateHit.addEventListener("pointerdown", onDown);
+        window.addEventListener("pointermove", onMove);
+        window.addEventListener("pointerup", onUp);
+        window.addEventListener("pointercancel", onUp);
+
+        window.addEventListener(
+          "resize",
+          () => {
+            px = clamp(px, plateRadiusPx() + 8, window.innerWidth - plateRadiusPx() - 8);
+            py = clamp(py, plateRadiusPx() + 8, window.innerHeight - plateRadiusPx() - 118);
+            tx = px;
+            ty = py;
+          },
+          { passive: true },
+        );
+
+        ensureLoop();
+
+        window.addEventListener(
+          "pagehide",
+          () => {
+            stopLoop();
+          },
+          { once: true },
+        );
+      })();
+    </script>
   </body>
 </html>
