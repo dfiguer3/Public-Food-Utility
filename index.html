@@ -20,7 +20,7 @@
         --gingham-stripe: rgba(204, 182, 221, 0.35);
         --gingham-stripe-2: rgba(255, 244, 214, 0.35);
         --ink: #3a2a2c;
-        --cta-bg: #a84852;
+        --cta-bg: rgba(193, 105, 79, 1);
         --cta-ink: #fffaf8;
       }
 
@@ -199,8 +199,8 @@
       import { plateGlbBase64, forkGlbBase64, spoonGlbBase64 } from './splash-model-data.js';
 
       const canvasFrame = {
-        left: 134,
-        top: 0,
+        left: 195,
+        top: 81,
         width: 377,
         height: 742,
       };
@@ -214,8 +214,8 @@
       renderer.setSize(canvasFrame.width, canvasFrame.height);
       renderer.shadowMap.enabled = true;
       renderer.domElement.style.position = 'absolute';
-      renderer.domElement.style.top = '0px';
-      renderer.domElement.style.left = '50%';
+      renderer.domElement.style.top = '81px';
+      renderer.domElement.style.left = '195px';
       renderer.domElement.style.transform = 'translateX(-50%)';
       renderer.domElement.style.width = canvasFrame.width + 'px';
       renderer.domElement.style.height = canvasFrame.height + 'px';
@@ -225,7 +225,7 @@
       canvasMount.appendChild(renderer.domElement);
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          renderer.domElement.style.top = canvasFrame.top + 'px';
+          renderer.domElement.style.top = '81px';
         });
       });
 
