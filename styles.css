@@ -823,10 +823,10 @@ h6 {
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   width: min(calc(var(--phone-w) - 32px), calc(100vw - 32px));
   height: 76px;
-  padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+  padding: 10px 12px 10px;
   /* Matches phone / app screen chrome */
   background: linear-gradient(
     180deg,

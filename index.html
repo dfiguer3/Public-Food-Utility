@@ -100,7 +100,7 @@
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
-        padding: 22px 20px 18px;
+        padding: 22px 20px calc(18px + env(safe-area-inset-bottom, 0px));
         pointer-events: none;
       }
 
@@ -151,8 +151,9 @@
         justify-content: center;
         position: absolute;
         left: 14px;
-        top: 763px;
-        width: 365px;
+        right: 14px;
+        bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+        width: auto;
         min-height: 52px;
         padding: 14px 22px;
         border: none;
