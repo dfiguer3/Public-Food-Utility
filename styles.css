@@ -157,6 +157,8 @@ h6 {
 
 /* App layout (centered phone frame) */
 .app {
+  /* Use stable viewport height on mobile browsers (Safari URL bar). */
+  min-height: 100svh;
   min-height: 100dvh;
   display: grid;
   place-items: center;
@@ -4544,11 +4546,13 @@ dialog[open] .filter-sheet {
 
 @media (max-width: 430px) {
   .app {
-    padding: 0;
+    /* Keep content inside iPhone safe areas. */
+    padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px) 0;
     place-items: start center;
   }
   .phone {
     width: 100vw;
+    height: 100svh;
     height: 100dvh;
     border-radius: 0;
   }
