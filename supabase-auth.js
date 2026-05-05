@@ -35,6 +35,7 @@
     const signUpBtn = $("[data-supabase-signup]");
     const signInBtn = $("[data-supabase-signin]");
     const googleBtn = $("[data-supabase-google]");
+    const forgotBtn = $("[data-supabase-forgot]");
     const signOutBtn = $("[data-supabase-signout]");
     const statusEl = $("[data-supabase-status]");
 
@@ -67,7 +68,9 @@
 
         // Splash entry: once signed in, proceed to the app.
         const screen = document.querySelector("main[data-screen]")?.getAttribute("data-screen") || "";
-        if (screen === "splash") {
+        const params = new URLSearchParams(window.location.search || "");
+        const splashPlayMode = params.get("play") === "1";
+        if (screen === "splash" && !splashPlayMode) {
           window.location.href = "homepage.html";
         }
       } else {
@@ -120,6 +123,23 @@
       setStatus("");
     }
 
+    async function forgotPassword() {
+      const email = (emailInput?.value || "").trim();
+      if (!email) {
+        setStatus("Enter your email first.");
+        return;
+      }
+      setStatus("Sending reset email…");
+      const origin = window.location.origin || "";
+      const redirectTo = `${origin}/reset.html`;
+      const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo });
+      if (error) {
+        setStatus(error.message || "Reset request failed.");
+        return;
+      }
+      setStatus("Check your email for a reset link.");
+    }
+
     async function signInWithGoogle() {
       setStatus("Opening Google sign-in…");
       const redirectTo = (window.location.href || "").split("#")[0];
@@ -129,7 +149,6 @@
       });
       if (error) {
         setStatus(error.message || "Google sign-in failed.");
-        return;
       }
     }
 
@@ -137,11 +156,14 @@
       setStatus("Signing out…");
       await client.auth.signOut();
       setStatus("");
+      // After signing out from the drawer, return to splash.
+      window.location.href = "index.html";
     }
 
     signUpBtn?.addEventListener("click", () => signUp());
     signInBtn?.addEventListener("click", () => signIn());
     googleBtn?.addEventListener("click", () => signInWithGoogle());
+    forgotBtn?.addEventListener("click", () => forgotPassword());
     signOutBtn?.addEventListener("click", () => signOut());
   }
 

@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Support • Public Food Utility</title>
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="icon" href="./favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <meta name="theme-color" content="#d9edee" />
     <!-- Google prototype auth removed; Supabase Auth is used instead -->
     <script defer src="./script.js"></script>
     <script defer src="./profile-drawer.js"></script>
@@ -55,7 +61,16 @@
               <div class="sheet sheet-profile" aria-label="Profile details">
                 <div class="sheet-head">
                   <h1 class="page-title">Your Plate</h1>
-                  <button class="profile-edit-btn" type="button" data-action="profile-edit">Edit</button>
+                  <div class="profile-sheet-actions" aria-label="Profile actions">
+                    <button class="profile-play-btn" type="button" data-action="play-splash" aria-label="Play with plate">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                          d="M7.5 9.5h9A4.5 4.5 0 0 1 21 14v1a4 4 0 0 1-4 4h-1.2a3 3 0 0 1-2.4-1.2l-.9-1.2h-1l-.9 1.2A3 3 0 0 1 8.2 19H7a4 4 0 0 1-4-4v-1a4.5 4.5 0 0 1 4.5-4.5Zm.5 2A2.5 2.5 0 0 0 5.5 14v1A2 2 0 0 0 7 17h1.2c.3 0 .6-.1.8-.4l1.1-1.5c.3-.4.7-.6 1.2-.6h2.3c.5 0 .9.2 1.2.6l1.1 1.5c.2.3.5.4.8.4H17a2 2 0 0 0 2-2v-1a2.5 2.5 0 0 0-2.5-2.5H8Zm1 1.5h1v1H9v-1Zm1.5-1.5h1v3h-1v-3Zm7 .8a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm-2 2a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"
+                        />
+                      </svg>
+                    </button>
+                    <button class="profile-edit-btn" type="button" data-action="profile-edit">Edit</button>
+                  </div>
                 </div>
                 <div class="profile-row">
                   <div class="profile-label">Name</div>
@@ -83,6 +98,9 @@
                         autocomplete="current-password"
                       />
                       <button type="button" class="puf-auth-btn" data-supabase-google>Continue with Google</button>
+                      <button type="button" class="puf-auth-btn puf-auth-btn--soft" data-supabase-forgot>
+                        Forgot password?
+                      </button>
                       <div class="puf-auth-actions">
                         <button type="button" class="puf-auth-btn" data-supabase-signin>Sign in</button>
                         <button type="button" class="puf-auth-btn puf-auth-btn--soft" data-supabase-signup>Sign up</button>

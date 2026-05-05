@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Reset password • Public Food Utility</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./supabase-config.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="./reset-password.js"></script>
+  </head>
+  <body class="app">
+    <main class="screen" data-screen="reset">
+      <div class="phone" role="application" aria-label="Reset password">
+        <section class="content" aria-label="Reset password form">
+          <div class="sheet sheet-profile" style="height:auto; padding: 16px" aria-label="Reset password">
+            <h1 class="page-title" style="margin: 0 0 10px">Reset password</h1>
+            <p class="profile-auth-note" style="margin: 0 0 12px">
+              Enter a new password for your account.
+            </p>
+            <div class="puf-auth-form">
+              <input id="new-password" class="puf-auth-input" type="password" placeholder="New password" />
+              <button id="reset-submit" type="button" class="puf-auth-btn">Set new password</button>
+              <div class="profile-auth-note" id="reset-status" hidden></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>
+

@@ -1947,7 +1947,7 @@ h6 {
 
 .sheet-profile {
   margin-top: 16px;
-  height: 501px;
+  height: 551px;
 }
 
 /* Profile sheet: frosted glass */
@@ -2311,6 +2311,42 @@ dialog[data-modal-root="snap-edit-card"] .snap-ebt-img--active:active {
   align-items: start;
   justify-content: space-between;
   gap: 12px;
+}
+
+.profile-sheet-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-play-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-text-primary);
+  background: transparent;
+  color: var(--color-text-primary);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.profile-play-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  display: block;
+}
+
+.profile-play-btn:hover {
+  background: var(--color-text-primary);
+  color: var(--color-nav-active);
+}
+
+.profile-play-btn:focus-visible {
+  outline: 3px solid rgba(210, 196, 195, 0.35);
+  outline-offset: 2px;
 }
 
 .sheet-icons {

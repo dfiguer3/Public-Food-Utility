@@ -6,6 +6,12 @@
     <title>Your Plate</title>
     <meta name="description" content="Public Food Utility - welcome" />
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="icon" href="./favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <meta name="theme-color" content="#d9edee" />
     <script defer src="./script.js"></script>
     <script defer src="./supabase-config.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -117,7 +123,7 @@
         letter-spacing: -0.02em;
         font-family: "Capriola", var(--font-body);
         position: absolute;
-        left: 74px;
+        left: 125px;
         top: 39px;
         text-align: center;
       }
@@ -127,7 +133,7 @@
         font-size: 16px;
         color: rgba(58, 42, 44, 0.78);
         position: absolute;
-        left: 24px;
+        left: 112px;
         top: 72px;
         text-align: center;
         width: 175px;
@@ -254,9 +260,7 @@
 
     <script type="module">
       import * as THREE from 'three';
-      import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-      import { plateGlbBase64, forkGlbBase64, spoonGlbBase64 } from './splash-model-data.js';
 
       const canvasFrame = {
         left: 195,
@@ -306,19 +310,12 @@
       fillLight.position.set(-4, 3, 2);
       scene.add(fillLight);
 
-      const tableShadow = new THREE.Mesh(
-        new THREE.CircleGeometry(4.2, 64),
-        new THREE.ShadowMaterial({ color: 0x000000, opacity: 0.12 }),
-      );
-      tableShadow.rotation.x = -Math.PI / 2;
-      tableShadow.position.y = -0.01;
-      tableShadow.receiveShadow = true;
-      scene.add(tableShadow);
+      // Removed “table” shadow receiver: with a flat PNG plane, shadows read as a hard rectangle.
 
-      const loader = new GLTFLoader();
       const raycaster = new THREE.Raycaster();
       const pointer = new THREE.Vector2();
-      const dragPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+      // Drag on a screen-facing plane so movement is left/right + up/down.
+      const dragPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
       const planeHit = new THREE.Vector3();
       const dragOffset = new THREE.Vector3();
       const lastPointerPoint = new THREE.Vector3();
@@ -326,8 +323,6 @@
       const momentum = new THREE.Vector3();
 
       let plate = null;
-      let fork = null;
-      let spoon = null;
       let plateLiftRig = null;
       let isDragging = false;
       let plateTarget = new THREE.Vector3(0, 0, 0);
@@ -340,47 +335,19 @@
       let entranceStartMs = null;
       let entranceDone = false;
       const plateForwardOffset = 0.28;
+      const plateScreenZ = 0.6;
+      let plateBaseScale = 1;
 
-      const plateBaseRotation = new THREE.Euler(-Math.PI / 2, 0, 0);
-      const utensilBaseRotation = new THREE.Euler(-Math.PI / 2, 0, Math.PI);
+      // Tilt the splash plate up (hinged at the bottom edge).
+      const plateLiftTilt = THREE.MathUtils.degToRad(45);
+      const plateBaseRotation = new THREE.Euler(-Math.PI / 2 + plateLiftTilt, 0, 0);
       const modelSources = {
-        set: {
-          path: './assets/models/the_set.glb',
-          label: 'Set',
-          position: new THREE.Vector3(0, 0, 0),
-          size: 2.57,
-        },
         plate: {
-          path: './assets/models/plate.glb',
-          base64: plateGlbBase64,
           label: 'Plate',
           position: new THREE.Vector3(0, 0, 0),
           size: 2.1,
         },
-        fork: {
-          path: './assets/models/fork.glb',
-          base64: forkGlbBase64,
-          label: 'Fork',
-          position: new THREE.Vector3(-1.5, 0, 0),
-          size: 2.2,
-        },
-        spoon: {
-          path: './assets/models/spoon.glb',
-          base64: spoonGlbBase64,
-          label: 'Spoon',
-          position: new THREE.Vector3(1.5, 0, 0),
-          size: 2.2,
-        },
       };
-
-      function decodeBase64ToArrayBuffer(base64) {
-        const binary = atob(base64);
-        const bytes = new Uint8Array(binary.length);
-        for (let index = 0; index < binary.length; index += 1) {
-          bytes[index] = binary.charCodeAt(index);
-        }
-        return bytes.buffer;
-      }
 
       function applyShadowSettings(root) {
         root.traverse((child) => {
@@ -466,89 +433,72 @@
         camera.lookAt(fittedCameraLookAt);
       }
 
-      function parseEmbeddedModel(config, onLoad) {
-        loader.parse(
-          decodeBase64ToArrayBuffer(config.base64),
-          '',
-          (gltf) => {
-            console.log(config.label + ' loaded:', gltf.scene);
-            onLoad(gltf.scene);
-          },
-          () => {},
-        );
+      function createPlatePngMesh(config) {
+        return new Promise((resolve, reject) => {
+          const textureLoader = new THREE.TextureLoader();
+          textureLoader.load(
+            './assets/Plate.png',
+            (tex) => {
+              tex.colorSpace = THREE.SRGBColorSpace;
+              tex.anisotropy = Math.max(1, Math.min(8, renderer.capabilities.getMaxAnisotropy?.() ?? 8));
+
+              // PlaneGeometry is centered by default; translate so the bottom edge is at the origin.
+              // This makes rotations feel like the bottom (closest) edge is anchored.
+              const geo = new THREE.PlaneGeometry(2, 2, 1, 1);
+              geo.translate(0, 1, 0);
+              const mat = new THREE.MeshStandardMaterial({
+                map: tex,
+                transparent: true,
+                opacity: 1,
+                roughness: 0.75,
+                metalness: 0.0,
+              });
+              const mesh = new THREE.Mesh(geo, mat);
+              // Avoid rectangular plane shadow artifacts.
+              mesh.castShadow = false;
+              mesh.receiveShadow = false;
+
+              // Match the old plate config feel.
+              mesh.position.copy(config.position);
+              mesh.rotation.copy(plateBaseRotation);
+              plateBaseScale = config.size / 2;
+              mesh.scale.setScalar(plateBaseScale);
+              scene.add(mesh);
+              resolve(mesh);
+            },
+            undefined,
+            () => reject(new Error('Failed to load Plate.png')),
+          );
+        });
       }
 
-      function loadModel(config, onLoad) {
-        const isFileProtocol = window.location.protocol === 'file:';
-
-        if (isFileProtocol && config.base64) {
-          parseEmbeddedModel(config, onLoad);
-          return;
-        }
-
-        loader.load(
-          config.path,
-          (gltf) => {
-            console.log(config.label + ' loaded:', gltf.scene);
-            onLoad(gltf.scene);
-          },
-          undefined,
-          () => {
-            if (config.base64) {
-              parseEmbeddedModel(config, onLoad);
-              return;
-            }
-            console.error('Failed to load ' + config.label + ':', config.path);
-          },
-        );
-      }
-
-      if (window.location.protocol === 'file:') {
-        loadModel(modelSources.plate, (root) => {
-          plate = root;
-          finalizeModel(plate, modelSources.plate, plateBaseRotation);
-          plate.position.z += plateForwardOffset;
+      createPlatePngMesh(modelSources.plate)
+        .then((mesh) => {
+          plate = mesh;
+          // Keep the plate on a fixed screen-facing depth.
+          plate.position.z = plateScreenZ;
           plateTarget.copy(plate.position);
           lastPointerPoint.copy(plate.position);
           basePlateY = plate.position.y;
-          fitCameraToObject(plate, 1.14);
+          // Extra padding so the plate doesn’t clip while spinning in.
+          fitCameraToObject(plate, 1.32);
           entranceStartMs = performance.now();
           entranceDone = false;
+        })
+        .catch((err) => {
+          console.error(err);
         });
 
-        loadModel(modelSources.fork, (root) => {
-          fork = root;
-          finalizeModel(fork, modelSources.fork, utensilBaseRotation);
-        });
-
-        loadModel(modelSources.spoon, (root) => {
-          spoon = root;
-          finalizeModel(spoon, modelSources.spoon, utensilBaseRotation);
-        });
-      } else {
-        loadModel(modelSources.set, (root) => {
-          const setModel = root;
-          const namedNodes = [];
-
-          setModel.traverse((child) => {
-            if (child.name) {
-              namedNodes.push(child.name.toLowerCase());
-            }
-          });
-
-          const setRig = buildSetLiftRig(setModel, modelSources.set);
-          plate = setRig.rig;
-          plateLiftRig = setRig.liftWrapper;
-          plate.position.z += plateForwardOffset;
-          plateTarget.copy(plate.position);
-          lastPointerPoint.copy(plate.position);
-          basePlateY = plate.position.y;
-          fitCameraToObject(plate, 1.14);
-          entranceStartMs = performance.now();
-          entranceDone = false;
-
-          console.log('Set node names:', namedNodes);
-        });
+      function inInteractionBox(event) {
+        // Constrain interaction to the “red box” region (big middle area).
+        // Tuned for the current splash layout.
+        const rect = renderer.domElement.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const padX = 18;
+        const topPad = 110;
+        const bottomPad = 110;
+        return x >= padX && x <= rect.width - padX && y >= topPad && y <= rect.height - bottomPad;
       }
 
       function updatePointer(event) {
@@ -560,23 +510,27 @@
       function getPlaneIntersection(event, target) {
         updatePointer(event);
         raycaster.setFromCamera(pointer, camera);
+        dragPlane.constant = -plateScreenZ;
         return raycaster.ray.intersectPlane(dragPlane, target);
       }
 
       function getWorldBounds() {
-        const viewHeight = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5)) * camera.position.y;
+        const distance = Math.max(0.001, Math.abs(camera.position.z - plateScreenZ));
+        const viewHeight = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5)) * distance;
         const viewWidth = viewHeight * camera.aspect;
 
         return {
           minX: -viewWidth * 0.36,
           maxX: viewWidth * 0.36,
-          minZ: -2.1,
-          maxZ: 1.05,
+          // Allow dragging further down, but keep above the button area.
+          minY: -viewHeight * 0.34,
+          maxY: viewHeight * 0.22,
         };
       }
 
       renderer.domElement.addEventListener('pointerdown', (event) => {
         if (!plate) return;
+        if (!inInteractionBox(event)) return;
 
         updatePointer(event);
         raycaster.setFromCamera(pointer, camera);
@@ -595,12 +549,13 @@
 
       renderer.domElement.addEventListener('pointermove', (event) => {
         if (!isDragging || !plate) return;
+        if (!inInteractionBox(event)) return;
         if (!getPlaneIntersection(event, planeHit)) return;
 
-        plateTarget.set(planeHit.x - dragOffset.x, basePlateY, planeHit.z - dragOffset.z);
+        plateTarget.set(planeHit.x - dragOffset.x, planeHit.y - dragOffset.y, plateScreenZ);
         const bounds = getWorldBounds();
         plateTarget.x = THREE.MathUtils.clamp(plateTarget.x, bounds.minX, bounds.maxX);
-        plateTarget.z = THREE.MathUtils.clamp(plateTarget.z, bounds.minZ, bounds.maxZ);
+        plateTarget.y = THREE.MathUtils.clamp(plateTarget.y, bounds.minY, bounds.maxY);
 
         dragVelocity.copy(plateTarget).sub(lastPointerPoint);
         lastPointerPoint.copy(plateTarget);
@@ -644,8 +599,14 @@
               : THREE.MathUtils.clamp((performance.now() - entranceStartMs) / 1100, 0, 1);
           entranceDone = entranceT >= 1;
           const ease = 1 - Math.pow(1 - entranceT, 3);
-          const slideInY = THREE.MathUtils.lerp(2.2, 0, ease);
-          const slideInZ = THREE.MathUtils.lerp(-0.9, 0, ease);
+          const centerX = 0;
+          const centerY = (bounds.minY + bounds.maxY) * 0.5;
+          // Start from the upper “arrow” area (just below the title),
+          // not from far off-screen.
+          const slideStartY = bounds.maxY + 0.35;
+          const slideInY = THREE.MathUtils.lerp(slideStartY, centerY, ease);
+          const spinIn = THREE.MathUtils.lerp(Math.PI * 2.1, 0, ease);
+          const entranceScale = THREE.MathUtils.lerp(0.9, 1.0, ease);
 
           if (isDragging) {
             plate.position.lerp(plateTarget, 0.15);
@@ -656,14 +617,13 @@
             );
             tiltX = THREE.MathUtils.lerp(
               tiltX,
-              THREE.MathUtils.clamp(dragVelocity.z * 2.8, THREE.MathUtils.degToRad(-12), THREE.MathUtils.degToRad(12)),
+              THREE.MathUtils.clamp(dragVelocity.y * 3.1, THREE.MathUtils.degToRad(-12), THREE.MathUtils.degToRad(12)),
               0.18,
             );
             rotationY = THREE.MathUtils.lerp(rotationY, 0, 0.18);
-            plate.position.y = basePlateY;
           } else {
             plate.position.x += momentum.x;
-            plate.position.z += momentum.z;
+            plate.position.y += momentum.y;
             momentum.multiplyScalar(0.88);
 
             if (plate.position.x < bounds.minX || plate.position.x > bounds.maxX) {
@@ -671,21 +631,31 @@
               momentum.x *= -0.76;
             }
 
-            if (plate.position.z < bounds.minZ || plate.position.z > bounds.maxZ) {
-              plate.position.z = THREE.MathUtils.clamp(plate.position.z, bounds.minZ, bounds.maxZ);
-              momentum.z *= -0.76;
+            if (plate.position.y < bounds.minY || plate.position.y > bounds.maxY) {
+              plate.position.y = THREE.MathUtils.clamp(plate.position.y, bounds.minY, bounds.maxY);
+              momentum.y *= -0.76;
             }
 
-            plate.position.y = basePlateY + Math.sin(now * (Math.PI * 2 / 3)) * 0.05;
-            rotationY = Math.sin(now * (Math.PI * 2 / 3)) * THREE.MathUtils.degToRad(2);
+            // Gentle idle wobble (keep it subtle).
+            rotationY = Math.sin(now * (Math.PI * 2 / 3)) * THREE.MathUtils.degToRad(1.2);
             tiltX = THREE.MathUtils.lerp(tiltX, 0, 0.08);
             tiltZ = THREE.MathUtils.lerp(tiltZ, 0, 0.08);
           }
 
-          if (!entranceDone && !isDragging) {
-            plate.position.y += slideInY;
-            plate.position.z += slideInZ;
+          if (!entranceDone) {
+            // Always come from center-top, spinning down, then settle in the middle.
+            plate.position.x = centerX;
+            plate.position.y = isDragging ? plate.position.y : slideInY;
+            plate.position.z = plateScreenZ;
+            plate.scale.setScalar(plateBaseScale * entranceScale);
+          } else {
+            plate.scale.setScalar(plateBaseScale);
           }
+
+          // Hard clamp every frame so it never drifts off-screen.
+          plate.position.x = THREE.MathUtils.clamp(plate.position.x, bounds.minX, bounds.maxX);
+          plate.position.y = THREE.MathUtils.clamp(plate.position.y, bounds.minY, bounds.maxY);
+          plate.position.z = plateScreenZ;
 
           if (plateLiftRig) {
             const targetLift = isDragging
@@ -697,7 +667,7 @@
 
           plate.rotation.x = plateBaseRotation.x + tiltX;
           plate.rotation.y = plateBaseRotation.y + rotationY;
-          plate.rotation.z = plateBaseRotation.z + tiltZ;
+          plate.rotation.z = plateBaseRotation.z + tiltZ + (entranceDone ? 0 : spinIn);
         }
 
         camera.lookAt(fittedCameraLookAt);

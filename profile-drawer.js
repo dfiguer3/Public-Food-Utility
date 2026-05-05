@@ -283,6 +283,16 @@
     document.querySelectorAll(".phone").forEach((phone) => {
       initDrawer(phone);
       init3DPlate(phone);
+
+      // “Game” button: go to splash without signing out.
+      phone.querySelectorAll("[data-action='play-splash']").forEach((btn) => {
+        if (btn.dataset.pufBound === "1") return;
+        btn.dataset.pufBound = "1";
+        btn.addEventListener("click", (e) => {
+          e.preventDefault?.();
+          window.location.href = "index.html?play=1";
+        });
+      });
     });
   }
 
