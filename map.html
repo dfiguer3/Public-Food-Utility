@@ -50,7 +50,7 @@
             <div class="profile-plate-content">
               <div class="sheet sheet-profile" aria-label="Profile details">
                 <div class="sheet-head">
-                  <h1 class="page-title">Profile</h1>
+                  <h1 class="page-title">Your Plate</h1>
                   <button class="profile-edit-btn" type="button" data-action="profile-edit">Edit</button>
                 </div>
                 <div class="profile-row">
@@ -82,36 +82,67 @@
         </section>
 
         <section class="content map-canvas" aria-label="Map canvas">
-          <div class="map-page">
-            <p class="map-bbox-note">
-              Map and search are limited to the Knoxville area (approx. Knox County). Places listed are a curated
-              sample—always confirm hours, eligibility, and services before visiting.
-            </p>
-            <form id="map-search-form" class="map-search-form" role="search" aria-label="Search Knoxville address">
-              <input
-                id="map-search-input"
-                name="q"
-                type="search"
-                enterkeyhint="search"
-                placeholder="Search address in Knoxville…"
-                autocomplete="street-address"
-              />
-              <button type="submit" class="map-search-submit">Search</button>
-              <button type="button" id="map-locate-btn" class="map-locate-btn">My location</button>
-            </form>
-            <div id="map-status" class="map-status" role="status" aria-live="polite" hidden></div>
-            <div class="map-split">
-              <div id="map" class="map-gl" role="region" aria-label="Knoxville map"></div>
-              <aside class="map-side" aria-label="Food pantries and food banks">
-                <div class="map-route-panel">
+          <div class="map-page map-page--full">
+            <div class="map-topbar" role="region" aria-label="Map search">
+              <form id="map-search-form" class="map-search-form" role="search" aria-label="Search Knoxville address">
+                <input
+                  id="map-search-input"
+                  name="q"
+                  type="search"
+                  enterkeyhint="search"
+                  placeholder="Search address in Knoxville…"
+                  autocomplete="street-address"
+                />
+                <button type="submit" class="map-search-submit">Search</button>
+                <button type="button" id="map-locate-btn" class="map-locate-btn">My location</button>
+              </form>
+              <div id="map-status" class="map-status" role="status" aria-live="polite" hidden></div>
+            </div>
+
+            <div id="map" class="map-gl map-gl--full" role="region" aria-label="Knoxville map"></div>
+
+            <div class="map-sheet-backdrop" data-map-sheet-backdrop hidden></div>
+            <section
+              class="map-sheet"
+              data-map-sheet
+              role="dialog"
+              aria-label="Location details"
+              aria-hidden="true"
+              tabindex="-1"
+            >
+              <div class="map-sheet__handle" aria-hidden="true"></div>
+              <div class="map-sheet__head">
+                <div class="map-sheet__title-wrap">
+                  <h2 class="map-sheet__title" data-map-sheet-title>Location</h2>
+                  <div class="map-sheet__meta" data-map-sheet-meta></div>
+                </div>
+                <button class="icon-btn map-sheet__close" type="button" data-map-sheet-close aria-label="Close details">
+                  <span class="icon icon-x" aria-hidden="true"></span>
+                </button>
+              </div>
+
+              <div class="map-sheet__body">
+                <div class="map-sheet__row">
+                  <div class="map-sheet__label">Address</div>
+                  <div class="map-sheet__value" data-map-sheet-address>—</div>
+                </div>
+                <div class="map-sheet__row">
+                  <div class="map-sheet__label">Hours</div>
+                  <div class="map-sheet__value" data-map-sheet-hours>—</div>
+                </div>
+
+                <div class="map-sheet__actions" aria-label="Actions">
+                  <button type="button" class="map-sheet__primary" data-map-sheet-directions>Get directions</button>
+                  <button type="button" class="map-sheet__secondary" data-map-sheet-notify>Notify me</button>
+                </div>
+
+                <div class="map-route-panel map-route-panel--sheet" aria-label="Route">
                   <div id="map-route-summary" class="map-route-summary"></div>
                   <button type="button" id="map-route-clear" class="map-route-clear" hidden>Clear route</button>
                   <ol id="map-route-steps" class="map-route-steps"></ol>
                 </div>
-                <div class="map-list-head">Nearby (sorted by distance)</div>
-                <ul id="map-place-list" class="map-place-list" role="listbox" aria-label="Location list"></ul>
-              </aside>
-            </div>
+              </div>
+            </section>
           </div>
         </section>
       </div>

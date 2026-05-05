@@ -39,10 +39,12 @@
     // Weekly target: 18%–30% of monthly benefit, rounded to whole dollars.
     const weeklyTarget = Math.round(monthlyBenefit * randFloat(0.18, 0.3));
 
-    // Balance: somewhere between 5% and 70% of monthly benefit.
-    const balance = Math.round(monthlyBenefit * randFloat(0.05, 0.7) * 100) / 100;
+    // Balance mockup stays coherent with issued amount (loads new numbers each visit).
+    const pctRemaining = randFloat(0.12, 0.92);
+    const ebtRemaining = Math.round(monthlyBenefit * pctRemaining * 100) / 100;
+    const ebtUsed = Math.round((monthlyBenefit - ebtRemaining) * 100) / 100;
 
-    return { household, monthlyBenefit, nextDepositDays, weeklyTarget, balance };
+    return { household, monthlyBenefit, nextDepositDays, weeklyTarget, ebtRemaining, ebtUsed };
   }
 
   function pick(arr) {
@@ -176,10 +178,13 @@
   function initCardCustomizer() {
     const img = $("#snap-ebt-card");
     if (!img) return;
+    const prevImg = document.querySelector("[data-snap-ebt-prev]");
+    const nextImg = document.querySelector("[data-snap-ebt-next]");
 
     const themes = ["./assets/ebt-card-1.png", "./assets/ebt-card-2.png", "./assets/ebt-card-3.png"];
     const key = "puf_snap_card_theme";
     const confirmBtn = $("#snap-confirm-card");
+    const dialog = confirmBtn?.closest?.("dialog[data-modal-root]") || img.closest?.("dialog[data-modal-root]");
     let idx = 0;
     const saved = Number.parseInt(localStorage.getItem(key) || "", 10);
     if (Number.isFinite(saved) && saved >= 0 && saved < themes.length) idx = saved;
@@ -187,15 +192,86 @@
     function applyPreview() {
       img.src = themes[idx];
     }
-    applyPreview();
-
-    for (const btn of $$("[data-card-theme]")) {
-      btn.addEventListener("click", () => {
-        const dir = btn.getAttribute("data-card-theme");
-        idx = dir === "prev" ? (idx + themes.length - 1) % themes.length : (idx + 1) % themes.length;
-        applyPreview();
-      });
+    function applySides() {
+      if (prevImg) prevImg.src = themes[(idx + themes.length - 1) % themes.length];
+      if (nextImg) nextImg.src = themes[(idx + 1) % themes.length];
     }
+
+    function applyAll() {
+      applyPreview();
+      applySides();
+    }
+
+    applyAll();
+
+    // Apply saved choice to the main (top) card immediately on page load.
+    const top = $("#snap-ebt-card-top");
+    if (top && top.tagName === "IMG") top.setAttribute("src", themes[idx]);
+    document.documentElement.style.setProperty("--puf-ebt-card", `url("${themes[idx]}")`);
+
+    function step(delta) {
+      idx = (idx + themes.length + delta) % themes.length;
+      applyAll();
+    }
+
+    // Swipe/drag on the large preview image (touch + desktop drag).
+    let swipeStartX = 0;
+    let swipeStartY = 0;
+    let swiping = false;
+    const SWIPE_MIN_PX = 34;
+    let activePointerId = null;
+    let lastDx = 0;
+
+    // Prevent native browser "drag image" behavior from stealing the gesture.
+    img.setAttribute("draggable", "false");
+    img.addEventListener("dragstart", (e) => e.preventDefault());
+
+    img.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "mouse" && e.buttons !== 1) return;
+      e.preventDefault();
+      swiping = true;
+      activePointerId = e.pointerId;
+      swipeStartX = e.clientX;
+      swipeStartY = e.clientY;
+      lastDx = 0;
+      try {
+        img.setPointerCapture(activePointerId);
+      } catch {
+        // ignore
+      }
+    });
+    img.addEventListener("pointermove", (e) => {
+      if (!swiping || activePointerId !== e.pointerId) return;
+      e.preventDefault();
+      const dx = e.clientX - swipeStartX;
+      const dy = e.clientY - swipeStartY;
+      // Only drag when gesture is primarily horizontal.
+      if (Math.abs(dx) < Math.abs(dy) && Math.abs(dy) > 8) return;
+      lastDx = dx;
+      const clamped = Math.max(-140, Math.min(140, dx));
+      const rot = (clamped / 140) * 6;
+      document.documentElement.style.setProperty("--snap-card-drag-x", `${clamped}px`);
+      document.documentElement.style.setProperty("--snap-card-rot", `${rot}deg`);
+    });
+    img.addEventListener("pointerup", (e) => {
+      if (!swiping || activePointerId !== e.pointerId) return;
+      e.preventDefault();
+      swiping = false;
+      activePointerId = null;
+      const dx = e.clientX - swipeStartX;
+      const dy = e.clientY - swipeStartY;
+      document.documentElement.style.setProperty("--snap-card-drag-x", `0px`);
+      document.documentElement.style.setProperty("--snap-card-rot", `0deg`);
+      if (Math.abs(dx) < SWIPE_MIN_PX || Math.abs(dx) < Math.abs(dy)) return;
+      // Swipe left → next, swipe right → prev
+      step(dx < 0 ? 1 : -1);
+    });
+    img.addEventListener("pointercancel", () => {
+      swiping = false;
+      activePointerId = null;
+      document.documentElement.style.setProperty("--snap-card-drag-x", `0px`);
+      document.documentElement.style.setProperty("--snap-card-rot", `0deg`);
+    });
 
     if (confirmBtn) {
       confirmBtn.addEventListener("click", () => {
@@ -205,12 +281,11 @@
         if (top && top.tagName === "IMG") top.setAttribute("src", themes[idx]);
         // Let the shared theme script update CSS var too.
         document.documentElement.style.setProperty("--puf-ebt-card", `url("${themes[idx]}")`);
-        confirmBtn.textContent = "Saved";
-        confirmBtn.disabled = true;
-        setTimeout(() => {
-          confirmBtn.textContent = "Confirm";
-          confirmBtn.disabled = false;
-        }, 1200);
+        // Close the editor automatically after save.
+        if (dialog) {
+          if (typeof dialog.close === "function") dialog.close();
+          else dialog.removeAttribute("open");
+        }
       });
     }
   }
@@ -224,7 +299,8 @@
     setText("household", String(m.household));
     setText("nextDeposit", `${m.nextDepositDays} days`);
     setText("weeklyTarget", formatUSD(m.weeklyTarget));
-    setText("balance", formatUSD(m.balance));
+    setText("ebtRemaining", formatUSD(m.ebtRemaining));
+    setText("ebtUsed", formatUSD(m.ebtUsed));
 
     renderRows($(".snap-purchases"), generatePurchases(), "purchase");
     renderRows($(".snap-bills"), generateBills(), "bill");

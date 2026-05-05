@@ -16,12 +16,12 @@
     </script>
     <style>
       :root {
-        --gingham-base: rgba(255, 244, 214, 0.92);
-        --gingham-stripe: rgba(204, 182, 221, 0.35);
-        --gingham-stripe-2: rgba(255, 244, 214, 0.35);
-        --ink: #3a2a2c;
-        --cta-bg: rgba(193, 105, 79, 1);
-        --cta-ink: #fffaf8;
+        --gingham-base: var(--puf-gingham-base);
+        --gingham-stripe: var(--puf-gingham-blue);
+        --gingham-stripe-2: var(--puf-gingham-cream);
+        --ink: #5a3a2c;
+        --cta-bg: var(--color-accent);
+        --cta-ink: var(--color-on-accent);
       }
 
       * {
@@ -112,12 +112,21 @@
         line-height: 1.2;
         letter-spacing: -0.02em;
         font-family: "Capriola", var(--font-body);
+        position: absolute;
+        left: 74px;
+        top: 39px;
+        text-align: center;
       }
 
       .topline p {
         margin: 0;
         font-size: 16px;
         color: rgba(58, 42, 44, 0.78);
+        position: absolute;
+        left: 24px;
+        top: 72px;
+        text-align: center;
+        width: 175px;
       }
 
       .cta-wrap {
@@ -130,7 +139,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 100%;
+        position: absolute;
+        left: 14px;
+        top: 763px;
+        width: 365px;
         min-height: 52px;
         padding: 14px 22px;
         border: none;
@@ -180,8 +192,8 @@
           <div class="gingham" aria-hidden="true"></div>
           <div class="splash-ui">
             <header class="topline">
+              <p>Good food just around the corner!</p>
               <h1>Your Plate</h1>
-              <p>Good food, close by - let's find your next meal.</p>
             </header>
 
             <footer class="cta-wrap">

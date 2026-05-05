@@ -53,7 +53,7 @@
             <div class="profile-plate-content">
               <div class="sheet sheet-profile" aria-label="Profile details">
                 <div class="sheet-head">
-                  <h1 class="page-title">Profile</h1>
+                  <h1 class="page-title">Your Plate</h1>
                   <button class="profile-edit-btn" type="button" data-action="profile-edit">Edit</button>
                 </div>
                 <div class="profile-row">
@@ -84,13 +84,6 @@
           </div>
         </section>
 
-        <header class="home-header" aria-label="Header">
-          <button class="home-menu" type="button" data-modal="menu" aria-label="Menu">
-            <span class="home-dots" aria-hidden="true"><span aria-hidden="true"></span></span>
-          </button>
-          <div class="home-title" aria-label="App title">Your Plate</div>
-        </header>
-
         <nav class="puf-float-nav" aria-label="Primary navigation">
           <a href="homepage.html" aria-label="Nearby">
             <span class="nav-icon nav-icon--nearby" aria-hidden="true"></span>
@@ -107,9 +100,18 @@
         </nav>
 
         <section class="home-sheet" aria-label="Main content">
-          <div class="home-sheet-scroll home-sheet-scroll--stage" aria-label="SNAP content">
-            <div class="puf-scroll-stage" style="height:1220px">
-            <div class="puf-snap-hero" aria-label="EBT card" style="top:21px">
+          <div class="home-sheet-scroll home-sheet-scroll--stage" aria-label="SNAP content" style="height:757px">
+            <div class="mailbox-head-actions snap-sheet-edit" aria-label="SNAP actions">
+              <button class="mailbox-info-btn" type="button" data-modal="snap-edit-card" aria-label="Edit EBT card">
+                <span class="mailbox-info-icon" aria-hidden="true">✎</span>
+              </button>
+            </div>
+            <div class="puf-scroll-stage" style="height:757px">
+            <div class="home-section-row mailbox-header" aria-label="SNAP header">
+              <h1 class="home-heading">Your SNAP Benefits</h1>
+            </div>
+
+            <div class="puf-snap-hero snap-ebt-hero-top" aria-label="EBT card">
               <img
                 id="snap-ebt-card-top"
                 src="./assets/ebt-card-1.png"
@@ -118,8 +120,22 @@
               />
             </div>
 
-            <section class="snap-glance" aria-label="This month at a glance" style="top:250px">
-              <h2 class="snap-glance-title">This month at a glance</h2>
+            <section class="snap-ebt-balance-mockup" aria-label="EBT balance">
+              <div class="snap-ebt-balance-mockup__row">
+                <span class="snap-ebt-balance-mockup__label">Balance</span>
+                <span class="snap-ebt-balance-mockup__amount" data-snap-metric="ebtRemaining">$—</span>
+              </div>
+              <div class="snap-ebt-balance-mockup__meta">
+                <span class="snap-ebt-balance-mockup__meta-line">
+                  Issued this month&nbsp;<strong data-snap-metric="monthlyBenefit">$—</strong>
+                  <span aria-hidden="true"> · </span>
+                  Used so far <strong data-snap-metric="ebtUsed">$—</strong>
+                </span>
+              </div>
+            </section>
+
+            <section class="snap-glance" aria-label="This month" style="top: 400px">
+              <h2 class="snap-glance-title">This Month</h2>
 
               <article class="snap-glance-card">
                 <div class="snap-glance-body">
@@ -154,64 +170,7 @@
               </article>
             </section>
 
-            <section class="snap-customize" aria-label="Card customization" style="top:895px;left:38px">
-              <h2 class="snap-customize-title">Your EBT card</h2>
-
-              <div class="snap-card-custom">
-                <img
-                  id="snap-ebt-card"
-                  class="snap-ebt-img"
-                  src="./assets/ebt-card-1.png"
-                  alt="Your EBT card style preview"
-                  loading="lazy"
-                />
-
-                <div class="snap-card-custom-actions">
-                  <button
-                    type="button"
-                    class="snap-confirm-btn"
-                    id="snap-confirm-card"
-                    aria-label="Confirm this card style"
-                  >
-                    Confirm
-                  </button>
-
-                  <button type="button" class="snap-custom-btn" data-card-theme="prev" aria-label="Previous card style">
-                    Prev
-                  </button>
-                  <button type="button" class="snap-custom-btn" data-card-theme="next" aria-label="Next card style">
-                    Next
-                  </button>
-                </div>
-
-                <div class="snap-card-custom-note muted">
-                  This only changes the look of your card in the app (demo). It does not change your real EBT card.
-                </div>
-              </div>
-            </section>
-
-            <section class="snap-pay" aria-label="Pay with SNAP" style="top:622px">
-              <h2 class="snap-pay-title">Pay with your SNAP card</h2>
-              <div class="snap-pay-subtitle">Mock checkout for eligible items (demo)</div>
-
-              <div class="snap-pay-row">
-                <div class="snap-pay-label">Selected card</div>
-                <div class="snap-pay-value">EBT •••• 2048</div>
-              </div>
-              <div class="snap-pay-row">
-                <div class="snap-pay-label">Eligible total</div>
-                <div class="snap-pay-value">$18.42</div>
-              </div>
-              <div class="snap-pay-row">
-                <div class="snap-pay-label">Pickup time</div>
-                <div class="snap-pay-value">Today, 4:30 PM</div>
-              </div>
-
-              <div class="snap-pay-actions">
-                <button type="button" class="snap-pay-btn">Scan barcode</button>
-                <button type="button" class="snap-pay-btn is-secondary">Enter manually</button>
-              </div>
-            </section>
+            <!-- snap-pay section removed -->
           </div>
           </div>
         </section>
@@ -238,6 +197,92 @@
             <a href="emergency.html">Emergency</a>
             <a href="profile.html">Profile</a>
           </nav>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal" data-modal-root="snap-edit-card" aria-label="Edit EBT card">
+      <form method="dialog" class="modal-backdrop modal-backdrop--center">
+        <div class="modal-sheet" role="document" aria-label="EBT card editor">
+          <div class="modal-head">
+            <div class="snap-edit-head" aria-label="Edit card header">
+              <div class="modal-title">Edit EBT card</div>
+              <button class="mailbox-info-btn" type="button" data-modal="snap-card-info" aria-label="How editing works">
+                <span class="mailbox-info-icon" aria-hidden="true">i</span>
+              </button>
+            </div>
+            <button class="icon-btn" value="cancel" aria-label="Close">
+              <span class="icon icon-x" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <section class="snap-customize" aria-label="Card customization">
+            <div class="snap-card-custom">
+              <div class="snap-card-carousel" aria-label="Swipe to change card style">
+                <img
+                  class="snap-ebt-img snap-ebt-img--side snap-ebt-img--prev"
+                  data-snap-ebt-prev
+                  src="./assets/ebt-card-3.png"
+                  alt=""
+                  aria-hidden="true"
+                  loading="eager"
+                />
+                <img
+                  id="snap-ebt-card"
+                  class="snap-ebt-img snap-ebt-img--active"
+                  src="./assets/ebt-card-1.png"
+                  alt="Your EBT card style preview"
+                  loading="eager"
+                />
+                <img
+                  class="snap-ebt-img snap-ebt-img--side snap-ebt-img--next"
+                  data-snap-ebt-next
+                  src="./assets/ebt-card-2.png"
+                  alt=""
+                  aria-hidden="true"
+                  loading="eager"
+                />
+              </div>
+
+              <div class="snap-card-custom-actions">
+                <button
+                  type="button"
+                  class="snap-confirm-btn snap-confirm-btn--check"
+                  id="snap-confirm-card"
+                  aria-label="Save card style"
+                >
+                  <span aria-hidden="true">✓</span>
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal" data-modal-root="snap-card-info" aria-label="EBT card editing help">
+      <form method="dialog" class="modal-backdrop modal-backdrop--center">
+        <div class="modal-sheet" role="document" aria-label="How digital EBT card editing works">
+          <div class="modal-head">
+            <div class="modal-title">How card editing works</div>
+            <button class="icon-btn" value="cancel" aria-label="Close">
+              <span class="icon icon-x" aria-hidden="true"></span>
+            </button>
+          </div>
+          <div class="mailbox-info-body">
+            <p class="mailbox-info-lead">
+              This editor customizes your <strong>digital</strong> EBT card appearance in the app so you can recognize it
+              quickly.
+            </p>
+            <ul class="mailbox-info-list">
+              <li><strong>Pick a style</strong>: choose one of the card designs.</li>
+              <li><strong>Confirm</strong>: saves your choice to this device.</li>
+              <li><strong>Not your real card</strong>: it won’t change your physical EBT card or your benefits.</li>
+            </ul>
+            <p class="mailbox-info-foot">
+              Want a physical replacement card? Email <strong>snapcard@customize.org</strong> to request one.
+            </p>
+          </div>
         </div>
       </form>
     </dialog>

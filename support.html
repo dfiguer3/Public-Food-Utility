@@ -52,7 +52,7 @@
             <div class="profile-plate-content">
               <div class="sheet sheet-profile" aria-label="Profile details">
                 <div class="sheet-head">
-                  <h1 class="page-title">Profile</h1>
+                  <h1 class="page-title">Your Plate</h1>
                   <button class="profile-edit-btn" type="button" data-action="profile-edit">Edit</button>
                 </div>
                 <div class="profile-row">
@@ -82,13 +82,6 @@
             <div class="profile-drawer-handle" aria-hidden="true"></div>
           </div>
         </section>
-
-        <header class="home-header" aria-label="Header">
-          <button class="home-menu" type="button" data-modal="menu" aria-label="Menu">
-            <span class="home-dots" aria-hidden="true"><span aria-hidden="true"></span></span>
-          </button>
-          <div class="home-title" aria-label="App title">Your Plate</div>
-        </header>
 
         <nav class="puf-float-nav" aria-label="Primary navigation">
           <a href="homepage.html" aria-label="Nearby">
@@ -125,7 +118,6 @@
                         />
                       </svg>
                     </span>
-                    <span class="mailbox-filter-text">Filter</span>
                     <span class="mailbox-filter-dot" aria-hidden="true"></span>
                   </button>
                 </div>
@@ -133,43 +125,119 @@
 
               <div class="support-list" aria-label="Support resources">
                 <article id="support-card-1" class="support-card" data-tags="nutritional,housing">
-                  <a class="support-card__title" href="map.html">Knox Area Rescue Ministries (KARM)</a>
+                  <div class="support-card__head">
+                    <div class="support-card__title">Knox Area Rescue Ministries (KARM)</div>
+                    <a
+                      class="support-card__map"
+                      href="map.html?destQ=Knox%20Area%20Rescue%20Ministries%20Knoxville%20TN"
+                      aria-label="Map to Knox Area Rescue Ministries"
+                    >
+                      <span class="support-card__map-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path
+                            d="M12 21s7-5.2 7-11.2A7 7 0 1 0 5 9.8C5 15.8 12 21 12 21Zm0-8.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2Z"
+                          />
+                        </svg>
+                      </span>
+                    </a>
+                  </div>
                   <ul class="support-card__bullets">
                     <li>24/7 emergency shelter</li>
-                    <li>Meals</li>
-                    <li>Case management</li>
-                    <li>Transitional programs</li>
+                    <li>Meals · case management</li>
+                    <li>Transitional housing</li>
                   </ul>
                 </article>
 
                 <article class="support-card" data-tags="housing">
-                  <a class="support-card__title" href="map.html">Knox County Housing Authority</a>
+                  <div class="support-card__head">
+                    <div class="support-card__title">Knox County Housing Authority</div>
+                    <a
+                      class="support-card__map"
+                      href="map.html?destQ=Knox%20County%20Housing%20Authority%20Knoxville%20TN"
+                      aria-label="Map to Knox County Housing Authority"
+                    >
+                      <span class="support-card__map-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path
+                            d="M12 21s7-5.2 7-11.2A7 7 0 1 0 5 9.8C5 15.8 12 21 12 21Zm0-8.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2Z"
+                          />
+                        </svg>
+                      </span>
+                    </a>
+                  </div>
                   <ul class="support-card__bullets">
-                    <li>Provides safe, affordable housing</li>
-                    <li>Related services for low‑income individuals and families</li>
+                    <li>Affordable housing</li>
+                    <li>Programs for low‑income households</li>
                   </ul>
                 </article>
 
                 <article class="support-card" data-tags="housing">
-                  <a class="support-card__title" href="map.html">Knoxville Leadership Foundation “Operation Backyard”</a>
+                  <div class="support-card__head">
+                    <div class="support-card__title">Operation Backyard · Knoxville Leadership Foundation</div>
+                    <a
+                      class="support-card__map"
+                      href="map.html?destQ=Operation%20Backyard%20Knoxville%20TN"
+                      aria-label="Map to Operation Backyard"
+                    >
+                      <span class="support-card__map-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path
+                            d="M12 21s7-5.2 7-11.2A7 7 0 1 0 5 9.8C5 15.8 12 21 12 21Zm0-8.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2Z"
+                          />
+                        </svg>
+                      </span>
+                    </a>
+                  </div>
                   <ul class="support-card__bullets">
-                    <li>Free home repair services for low‑income, elderly, and disabled homeowners</li>
+                    <li>Free home repairs</li>
+                    <li>Low‑income, elderly &amp; disabled homeowners</li>
                   </ul>
                 </article>
 
                 <article id="support-card-urban-league" class="support-card" data-tags="housing,financial">
-                  <a class="support-card__title" href="map.html">Knoxville Area Urban League</a>
+                  <div class="support-card__head">
+                    <div class="support-card__title">Knoxville Area Urban League</div>
+                    <a
+                      class="support-card__map"
+                      href="map.html?destQ=Knoxville%20Area%20Urban%20League%20Knoxville%20TN"
+                      aria-label="Map to Knoxville Area Urban League"
+                    >
+                      <span class="support-card__map-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path
+                            d="M12 21s7-5.2 7-11.2A7 7 0 1 0 5 9.8C5 15.8 12 21 12 21Zm0-8.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2Z"
+                          />
+                        </svg>
+                      </span>
+                    </a>
+                  </div>
                   <ul class="support-card__bullets">
                     <li>Housing assistance</li>
                     <li>Financial education</li>
-                    <li>Homeownership support</li>
+                    <li>Home-buying readiness</li>
                   </ul>
                 </article>
 
                 <article class="support-card" data-tags="housing,nutritional">
-                  <a class="support-card__title" href="map.html">Family Promise of Knoxville</a>
+                  <div class="support-card__head">
+                    <div class="support-card__title">Family Promise of Knoxville</div>
+                    <a
+                      class="support-card__map"
+                      href="map.html?destQ=Family%20Promise%20of%20Knoxville%20Knoxville%20TN"
+                      aria-label="Map to Family Promise of Knoxville"
+                    >
+                      <span class="support-card__map-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path
+                            d="M12 21s7-5.2 7-11.2A7 7 0 1 0 5 9.8C5 15.8 12 21 12 21Zm0-8.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2Z"
+                          />
+                        </svg>
+                      </span>
+                    </a>
+                  </div>
                   <ul class="support-card__bullets">
-                    <li>Temporary housing, meals, and support services to help families achieve sustainable independence</li>
+                    <li>Housing, meals &amp; coaching for families</li>
+                    <li>Planning toward stable independence</li>
                   </ul>
                 </article>
               </div>

@@ -53,7 +53,7 @@
             <div class="profile-plate-content">
               <div class="sheet sheet-profile" aria-label="Profile details">
                 <div class="sheet-head">
-                  <h1 class="page-title">Profile</h1>
+                  <h1 class="page-title">Your Plate</h1>
                   <button class="profile-edit-btn" type="button" data-action="profile-edit">Edit</button>
                 </div>
                 <div class="profile-row">
@@ -84,13 +84,6 @@
           </div>
         </section>
 
-        <header class="home-header" aria-label="Header">
-          <button class="home-menu" type="button" data-modal="menu" aria-label="Menu">
-            <span class="home-dots" aria-hidden="true"><span aria-hidden="true"></span></span>
-          </button>
-          <div class="home-title" aria-label="App title">Your Plate</div>
-        </header>
-
         <nav class="puf-float-nav" aria-label="Primary navigation">
           <a href="homepage.html" aria-label="Nearby">
             <span class="nav-icon nav-icon--nearby" aria-hidden="true"></span>
@@ -118,7 +111,7 @@
                 </div>
               </div>
 
-              <div id="mailbox-list" class="mailbox-list" role="list" aria-label="Mail items"></div>
+              <div id="mailbox-list" class="mailbox-list" aria-label="Mailbox inbox"></div>
             </div>
           </div>
         </section>
@@ -176,34 +169,21 @@
           <div class="wallet-ticket" aria-label="Coupon preview">
             <img id="wallet-ticket-img" class="wallet-ticket-img" alt="" />
           </div>
-
-          <div class="wallet-top">
-            <div class="wallet-brand">
-              <div>
-                <div id="wallet-store" class="wallet-store">Store</div>
-                <div id="wallet-offer" class="wallet-offer">Offer</div>
-              </div>
-            </div>
-            <button class="wallet-close" value="cancel" aria-label="Close">
-              <span aria-hidden="true">✕</span>
-            </button>
-          </div>
-
-          <div class="wallet-value-row">
-            <div id="wallet-value" class="wallet-value">$0.00</div>
-            <div id="wallet-exp" class="wallet-exp">Expires —</div>
-          </div>
+          <button class="wallet-close" value="cancel" aria-label="Close">
+            <span aria-hidden="true">✕</span>
+          </button>
 
           <div class="wallet-code" aria-label="Barcode placeholder">
             <div class="wallet-barcode" aria-hidden="true"></div>
             <div id="wallet-code-text" class="wallet-code-text">CODE</div>
           </div>
 
-          <div class="wallet-cta">
-            <button class="wallet-cta-btn" type="button" data-wallet-action>
-              Scan at Register
-            </button>
-            <div class="wallet-cta-note">Tap to Redeem</div>
+          <button class="wallet-details-toggle" type="button" data-wallet-details-toggle aria-expanded="false">
+            Expand details
+          </button>
+          <div class="wallet-details" data-wallet-details hidden>
+            <div class="wallet-details-title">How to use this coupon</div>
+            <div id="wallet-details-text" class="wallet-details-text"></div>
           </div>
         </div>
       </form>

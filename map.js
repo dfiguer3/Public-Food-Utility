@@ -65,12 +65,108 @@
   const routeSummaryEl = $("#map-route-summary");
   const routeStepsEl = $("#map-route-steps");
   const routeClearBtn = $("#map-route-clear");
+  const sheetEl = document.querySelector("[data-map-sheet]");
+  const sheetBackdropEl = document.querySelector("[data-map-sheet-backdrop]");
+  const sheetCloseBtn = document.querySelector("[data-map-sheet-close]");
+  const sheetTitleEl = document.querySelector("[data-map-sheet-title]");
+  const sheetMetaEl = document.querySelector("[data-map-sheet-meta]");
+  const sheetAddressEl = document.querySelector("[data-map-sheet-address]");
+  const sheetHoursEl = document.querySelector("[data-map-sheet-hours]");
+  const sheetDirectionsBtn = document.querySelector("[data-map-sheet-directions]");
+  const sheetNotifyBtn = document.querySelector("[data-map-sheet-notify]");
+
+  const NOTIFY_STORAGE_KEY = "PUF_NOTIFY_SUBSCRIPTIONS_V1";
+  let sheetSelectedId = null;
+
+  function safeJsonParse(s, fallback) {
+    try {
+      return JSON.parse(s);
+    } catch {
+      return fallback;
+    }
+  }
+
+  function loadNotifySet() {
+    try {
+      const raw = localStorage.getItem(NOTIFY_STORAGE_KEY) || "[]";
+      const arr = safeJsonParse(raw, []);
+      return new Set(Array.isArray(arr) ? arr.map(String) : []);
+    } catch {
+      return new Set();
+    }
+  }
+
+  function saveNotifySet(set) {
+    try {
+      localStorage.setItem(NOTIFY_STORAGE_KEY, JSON.stringify(Array.from(set)));
+    } catch {
+      // ignore
+    }
+  }
+
+  function setSheetOpen(isOpen) {
+    if (!sheetEl) return;
+    sheetEl.classList.toggle("is-open", Boolean(isOpen));
+    sheetEl.setAttribute("aria-hidden", isOpen ? "false" : "true");
+    if (sheetBackdropEl) {
+      sheetBackdropEl.hidden = !isOpen;
+      sheetBackdropEl.classList.toggle("is-open", Boolean(isOpen));
+    }
+    if (isOpen) {
+      sheetEl.focus?.();
+    }
+  }
+
+  function closeSheet() {
+    sheetSelectedId = null;
+    setSheetOpen(false);
+  }
+
+  function formatPrimaryMeta(p) {
+    const bits = [];
+    if (p && p.kind) bits.push(p.kind);
+    if (p && p.tags) bits.push(p.tags);
+    return bits.filter(Boolean).join(" · ");
+  }
+
+  function getHoursText(p) {
+    if (!p) return "";
+    const candidates = ["hours", "Hours", "open_hours", "openHours", "schedule", "time"];
+    for (const k of candidates) {
+      if (p[k]) return String(p[k]);
+    }
+    return "";
+  }
+
+  function setNotifyButtonState(id) {
+    if (!sheetNotifyBtn) return;
+    const set = loadNotifySet();
+    const on = Boolean(id) && set.has(String(id));
+    sheetNotifyBtn.textContent = on ? "Notifications on" : "Notify me";
+    sheetNotifyBtn.setAttribute("aria-pressed", on ? "true" : "false");
+  }
+
+  function openSheetForFeature(f) {
+    if (!sheetEl || !f) return;
+    const p = f.properties || {};
+    const id = p.id ? String(p.id) : null;
+    sheetSelectedId = id;
+
+    if (sheetTitleEl) sheetTitleEl.textContent = p.name ? String(p.name) : "Location";
+    if (sheetMetaEl) sheetMetaEl.textContent = formatPrimaryMeta(p);
+    if (sheetAddressEl) sheetAddressEl.textContent = p.address ? String(p.address) : "—";
+    if (sheetHoursEl) sheetHoursEl.textContent = getHoursText(p) || "—";
+    setNotifyButtonState(id);
+
+    setSheetOpen(true);
+  }
 
   // Deep link support from Home cards: map.html?destLng=...&destLat=...&destName=...
   const urlParams = new URLSearchParams(window.location.search || "");
   const deepDestLng = Number(urlParams.get("destLng"));
   const deepDestLat = Number(urlParams.get("destLat"));
   const deepDestName = urlParams.get("destName") || "";
+  const deepDestQ = (urlParams.get("destQ") || urlParams.get("q") || "").trim();
   const deepDestLngLat =
     Number.isFinite(deepDestLng) && Number.isFinite(deepDestLat) ? [deepDestLng, deepDestLat] : null;
 
@@ -244,6 +340,7 @@
     if (!f) return;
     setSelectedFeature(id);
     map.flyTo({ center: f.geometry.coordinates, zoom: Math.max(map.getZoom(), 13), essential: true });
+    openSheetForFeature(f);
   }
 
   function clearRoute() {
@@ -362,6 +459,7 @@
       }
       if (routeClearBtn) routeClearBtn.hidden = false;
       setSelectedFeature(destId);
+      openSheetForFeature(dest);
       setStatus("");
     } catch {
       setStatus("Directions request failed. Check your connection and token.");
@@ -466,8 +564,66 @@
 
     if (deepDestLngLat) {
       fetchDirectionsToLngLat(deepDestLngLat, deepDestName);
+    } else if (deepDestQ) {
+      geocodeSearch(deepDestQ);
     }
   });
+
+  if (sheetCloseBtn) {
+    sheetCloseBtn.addEventListener("click", () => closeSheet());
+  }
+  if (sheetBackdropEl) {
+    sheetBackdropEl.addEventListener("click", () => closeSheet());
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeSheet();
+  });
+
+  if (sheetDirectionsBtn) {
+    sheetDirectionsBtn.addEventListener("click", () => {
+      if (!sheetSelectedId) return;
+      fetchDirections(sheetSelectedId);
+    });
+  }
+
+  if (sheetNotifyBtn) {
+    sheetNotifyBtn.addEventListener("click", async () => {
+      if (!sheetSelectedId) return;
+
+      const set = loadNotifySet();
+      const id = String(sheetSelectedId);
+      const isOn = set.has(id);
+
+      if (!isOn) {
+        if (!("Notification" in window)) {
+          setStatus("Notifications aren’t supported in this browser.");
+          return;
+        }
+        if (Notification.permission !== "granted") {
+          try {
+            const perm = await Notification.requestPermission();
+            if (perm !== "granted") {
+              setStatus("Notification permission was not granted.");
+              setNotifyButtonState(id);
+              return;
+            }
+          } catch {
+            setStatus("Could not request notification permission.");
+            return;
+          }
+        }
+        set.add(id);
+        saveNotifySet(set);
+        setStatus("You’ll be notified for updates on this location (prototype).");
+      } else {
+        set.delete(id);
+        saveNotifySet(set);
+        setStatus("Notifications turned off for this location.");
+      }
+
+      setNotifyButtonState(id);
+    });
+  }
 
   if (searchForm && searchInput) {
     searchForm.addEventListener("submit", (e) => {

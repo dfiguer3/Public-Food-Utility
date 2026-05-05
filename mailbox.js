@@ -188,7 +188,6 @@
               <div class="letter-card-date">${escapeHtml(d)}</div>
             </div>
           </div>
-          <div class="letter-card-stamp" aria-hidden="true">POST</div>
         </div>
         <div class="letter-card-subject">${escapeHtml(item.subject)}</div>
         <div class="letter-card-preview">${escapeHtml(preview)}</div>
@@ -204,9 +203,99 @@
     });
   }
 
+  function folderItemsBlock(items, kind) {
+    const cardHtml =
+      kind === "coupon"
+        ? items.map((m) => couponCard(m)).join("")
+        : items.map((m) => letterCard(m)).join("");
+    return `<div class="mail-folder-items" role="list">${cardHtml}</div>`;
+  }
+
+  function folderEmptyBlock(message) {
+    return `<div class="mail-folder-items mail-folder-items--empty" role="status"><p class="mail-folder-empty">${escapeHtml(
+      message,
+    )}</p></div>`;
+  }
+
+  let activeFolder = "coupon";
+
+  function folderIconPlaceholder(kind) {
+    return kind === "letter"
+      ? `<span class="mail-folder-icon-placeholder" aria-hidden="true">✉</span>`
+      : `<span class="mail-folder-icon-placeholder" aria-hidden="true">⌂</span>`;
+  }
+
+  function segmentedTabs() {
+    return `
+      <div class="mailbox-segment" role="tablist" aria-label="Mailbox sections" data-active="${escapeAttr(
+        activeFolder,
+      )}">
+        <span class="mailbox-segment-indicator" aria-hidden="true"></span>
+        <button
+          class="mailbox-segment-tab"
+          type="button"
+          role="tab"
+          aria-selected="${activeFolder === "coupon" ? "true" : "false"}"
+          aria-controls="mailbox-panel-coupons"
+          data-folder-toggle="coupon"
+        >
+          <span class="mailbox-segment-label">Coupons</span>
+          <span class="mailbox-segment-icon" aria-hidden="true">${folderIconPlaceholder("coupon")}</span>
+        </button>
+        <button
+          class="mailbox-segment-tab"
+          type="button"
+          role="tab"
+          aria-selected="${activeFolder === "letter" ? "true" : "false"}"
+          aria-controls="mailbox-panel-letters"
+          data-folder-toggle="letter"
+        >
+          <span class="mailbox-segment-label">Real mail</span>
+          <span class="mailbox-segment-icon" aria-hidden="true">${folderIconPlaceholder("letter")}</span>
+        </button>
+      </div>
+    `;
+  }
+
   function renderList(root, applied) {
     const items = getMailForFilters(applied);
-    root.innerHTML = items.map((m) => (m.type === "coupon" ? couponCard(m) : letterCard(m))).join("");
+    const coupons = items.filter((m) => m.type === "coupon");
+    const letters = items.filter((m) => m.type === "letter");
+
+    const couponsBlock = coupons.length
+      ? folderItemsBlock(coupons, "coupon")
+      : folderEmptyBlock("No coupons to show.");
+    const lettersBlock = letters.length
+      ? folderItemsBlock(letters, "letter")
+      : folderEmptyBlock("No letters to show.");
+
+    root.innerHTML = `
+      <div class="mailbox-folders">
+        ${segmentedTabs()}
+
+        <section
+          id="mailbox-panel-coupons"
+          class="mail-folder mail-folder--coupons ${activeFolder === "coupon" ? "is-active" : "is-collapsed"}"
+          role="tabpanel"
+          aria-label="Coupons"
+        >
+          <div class="mail-folder-body">
+            ${couponsBlock}
+          </div>
+        </section>
+
+        <section
+          id="mailbox-panel-letters"
+          class="mail-folder mail-folder--letters ${activeFolder === "letter" ? "is-active" : "is-collapsed"}"
+          role="tabpanel"
+          aria-label="Real mail"
+        >
+          <div class="mail-folder-body">
+            ${lettersBlock}
+          </div>
+        </section>
+      </div>
+    `;
   }
 
   function main() {
@@ -229,6 +318,9 @@
     const walletCodeText = $("#wallet-code-text");
     const walletAction = $("[data-wallet-action]");
     const walletTicketImg = $("#wallet-ticket-img");
+    const walletDetailsToggle = $("[data-wallet-details-toggle]");
+    const walletDetails = $("[data-wallet-details]");
+    const walletDetailsText = $("#wallet-details-text");
 
     const letterFrom = $("#letter-from");
     const letterSubject = $("#letter-subject");
@@ -300,6 +392,17 @@
     refreshAppliedUI();
 
     list.addEventListener("click", (e) => {
+      const toggle = e.target?.closest?.("[data-folder-toggle]");
+      if (toggle) {
+        const kind = toggle.getAttribute("data-folder-toggle");
+        if (kind === "coupon" || kind === "letter") {
+          activeFolder = kind;
+          // Re-render so the segmented indicator + aria-selected stay correct.
+          renderList(list, appliedFilters);
+        }
+        return;
+      }
+
       const card = e.target?.closest?.("[data-mail-id]");
       if (!card) return;
       const id = card.getAttribute("data-mail-id");
@@ -321,6 +424,12 @@
         if (walletExp) walletExp.textContent = `Expires ${formatDate(item.expires)}`;
         if (walletCodeText) walletCodeText.textContent = item.code;
         if (walletAction) walletAction.textContent = "Scan at Register";
+        if (walletDetailsText) walletDetailsText.textContent = item.offer || "";
+        if (walletDetails) walletDetails.hidden = true;
+        if (walletDetailsToggle) {
+          walletDetailsToggle.textContent = "Expand details";
+          walletDetailsToggle.setAttribute("aria-expanded", "false");
+        }
         openDialog(walletDialog);
         return;
       }
@@ -334,6 +443,16 @@
       }
       openDialog(letterDialog);
     });
+
+    if (walletDetailsToggle) {
+      walletDetailsToggle.addEventListener("click", () => {
+        const expanded = walletDetailsToggle.getAttribute("aria-expanded") === "true";
+        const next = !expanded;
+        walletDetailsToggle.setAttribute("aria-expanded", next ? "true" : "false");
+        walletDetailsToggle.textContent = next ? "Hide details" : "Expand details";
+        if (walletDetails) walletDetails.hidden = !next;
+      });
+    }
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", main);
