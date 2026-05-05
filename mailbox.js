@@ -221,8 +221,8 @@
 
   function folderIconPlaceholder(kind) {
     return kind === "letter"
-      ? `<span class="mail-folder-icon-placeholder" aria-hidden="true">✉</span>`
-      : `<span class="mail-folder-icon-placeholder" aria-hidden="true">⌂</span>`;
+      ? `<span class="mailbox-segment-glyph mailbox-segment-glyph--letter" aria-hidden="true"></span>`
+      : `<span class="mailbox-segment-glyph mailbox-segment-glyph--coupon" aria-hidden="true"></span>`;
   }
 
   function segmentedTabs() {
@@ -240,7 +240,6 @@
           data-folder-toggle="coupon"
         >
           <span class="mailbox-segment-label">Coupons</span>
-          <span class="mailbox-segment-icon" aria-hidden="true">${folderIconPlaceholder("coupon")}</span>
         </button>
         <button
           class="mailbox-segment-tab"
@@ -250,8 +249,7 @@
           aria-controls="mailbox-panel-letters"
           data-folder-toggle="letter"
         >
-          <span class="mailbox-segment-label">Real mail</span>
-          <span class="mailbox-segment-icon" aria-hidden="true">${folderIconPlaceholder("letter")}</span>
+          <span class="mailbox-segment-label">Post</span>
         </button>
       </div>
     `;

@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>SNAP • Public Food Utility</title>
     <link rel="stylesheet" href="./styles.css" />
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Google prototype auth removed; Supabase Auth is used instead -->
     <script defer src="./script.js"></script>
     <script defer src="./theme.js"></script>
     <script defer src="./profile-drawer.js"></script>
     <script defer src="./profile-image.js"></script>
-    <script defer src="./google-auth.js"></script>
+    <script defer src="./supabase-config.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="./supabase-auth.js"></script>
     <script defer src="./snap.js"></script>
   </head>
   <body class="app">
@@ -46,7 +48,7 @@
                 class="profile-plate-avatar"
                 alt="Profile photo"
                 data-profile-photo
-                src="https://www.figma.com/api/mcp/asset/a2c1075d-6915-4401-a952-4c5dcfec623a"
+                src="./assets/Cherry port-02.png"
               />
             </div>
 
@@ -69,11 +71,30 @@
                   <div class="profile-value" data-profile-email>Not signed in</div>
                 </div>
 
-                <div class="profile-auth">
-                  <div id="google-signin-btn" class="google-signin-btn" aria-label="Sign in with Google"></div>
-                  <button class="google-signout-btn" type="button" data-action="google-signout">Sign out</button>
-                  <div class="profile-auth-note">
-                    Google sign-in is used to fill your profile. (Prototype: stored on this device.)
+                <div class="profile-auth" data-supabase-auth hidden>
+                  <div data-supabase-signed-out>
+                    <div class="profile-auth-note">Or sign in with email.</div>
+                    <div class="puf-auth-form" aria-label="Email sign in">
+                      <input id="supabase-email" class="puf-auth-input" type="email" placeholder="Email" autocomplete="email" />
+                      <input
+                        id="supabase-password"
+                        class="puf-auth-input"
+                        type="password"
+                        placeholder="Password"
+                        autocomplete="current-password"
+                      />
+                      <button type="button" class="puf-auth-btn" data-supabase-google>Continue with Google</button>
+                      <div class="puf-auth-actions">
+                        <button type="button" class="puf-auth-btn" data-supabase-signin>Sign in</button>
+                        <button type="button" class="puf-auth-btn puf-auth-btn--soft" data-supabase-signup>Sign up</button>
+                      </div>
+                      <div class="profile-auth-note" data-supabase-status hidden></div>
+                    </div>
+                  </div>
+
+                  <div data-supabase-signed-in hidden>
+                    <button type="button" class="puf-auth-btn" data-supabase-signout>Sign out</button>
+                    <div class="profile-auth-note" data-supabase-status hidden></div>
                   </div>
                 </div>
               </div>

@@ -1235,6 +1235,53 @@ h6 {
   font-weight: 600;
 }
 
+.puf-auth-form {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.puf-auth-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(59, 33, 12, 0.14);
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--color-heading);
+  font: inherit;
+  font-weight: 700;
+}
+
+.puf-auth-input::placeholder {
+  color: color-mix(in srgb, var(--color-heading) 55%, var(--color-bg));
+}
+
+.puf-auth-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.puf-auth-btn {
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid rgba(59, 33, 12, 0.14);
+  background: var(--color-accent);
+  color: var(--color-heading);
+  font: inherit;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.puf-auth-btn--soft {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.puf-auth-btn:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-heading) 25%, transparent);
+  outline-offset: 2px;
+}
+
 .profile-plate-avatar {
   position: absolute;
   left: 50%;
@@ -1900,7 +1947,7 @@ h6 {
 
 .sheet-profile {
   margin-top: 16px;
-  height: 420px;
+  height: 501px;
 }
 
 /* Profile sheet: frosted glass */
@@ -3517,20 +3564,6 @@ dialog[open] .filter-sheet {
   white-space: nowrap;
 }
 
-.mailbox-segment-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 10px;
-  background: var(--color-heading);
-  display: grid;
-  place-items: center;
-  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.12);
-}
-
-.mailbox-segment-icon .mail-folder-icon-placeholder {
-  font-size: 14px;
-  color: var(--color-nav-active);
-}
 
 .mail-folder {
   position: relative;

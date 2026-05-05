@@ -2,6 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "puf_profile_photo";
+  const PLACEHOLDER_SRC = "./assets/Cherry port-02.png";
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
@@ -17,8 +18,9 @@
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) setPhoto(saved);
+      else setPhoto(PLACEHOLDER_SRC);
     } catch {
-      // ignore
+      setPhoto(PLACEHOLDER_SRC);
     }
   }
 

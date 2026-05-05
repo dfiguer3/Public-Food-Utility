@@ -6,6 +6,10 @@
     <title>Your Plate</title>
     <meta name="description" content="Public Food Utility - welcome" />
     <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./script.js"></script>
+    <script defer src="./supabase-config.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="./supabase-auth.js"></script>
     <script type="importmap">
       {
         "imports": {
@@ -197,12 +201,56 @@
             </header>
 
             <footer class="cta-wrap">
-              <a class="cta" id="ctaEat" href="homepage.html">Let's Eat</a>
+              <button class="cta" id="ctaEat" type="button" data-modal="splash-auth">Let's Eat</button>
             </footer>
           </div>
         </div>
       </div>
     </main>
+
+    <dialog class="modal" data-modal-root="splash-auth" aria-label="Sign in">
+      <form method="dialog" class="modal-backdrop modal-backdrop--center">
+        <div class="modal-sheet" role="document" aria-label="Sign in to continue">
+          <div class="modal-head">
+            <div class="modal-title">Sign in</div>
+            <button class="icon-btn" value="cancel" aria-label="Close">
+              <span class="icon icon-x" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <div style="padding: 14px">
+            <div class="profile-auth" data-supabase-auth hidden>
+              <div data-supabase-signed-out>
+                <div class="puf-auth-form" aria-label="Email sign in">
+                  <button type="button" class="puf-auth-btn" data-supabase-google>Continue with Google</button>
+                  <input id="supabase-email" class="puf-auth-input" type="email" placeholder="Email" autocomplete="email" />
+                  <input
+                    id="supabase-password"
+                    class="puf-auth-input"
+                    type="password"
+                    placeholder="Password"
+                    autocomplete="current-password"
+                  />
+                  <div class="puf-auth-actions">
+                    <button type="button" class="puf-auth-btn" data-supabase-signin>Sign in</button>
+                    <button type="button" class="puf-auth-btn puf-auth-btn--soft" data-supabase-signup>Sign up</button>
+                  </div>
+                  <div class="profile-auth-note" data-supabase-status hidden></div>
+                </div>
+              </div>
+
+              <div data-supabase-signed-in hidden>
+                <div class="profile-auth-note">You're signed in. Continue to the app.</div>
+                <a class="puf-auth-btn" href="homepage.html" style="display:grid;place-items:center;text-decoration:none">
+                  Continue
+                </a>
+                <button type="button" class="puf-auth-btn puf-auth-btn--soft" data-supabase-signout>Sign out</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </dialog>
 
     <script type="module">
       import * as THREE from 'three';
