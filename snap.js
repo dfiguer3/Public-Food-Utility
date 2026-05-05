@@ -178,6 +178,8 @@
   function initCardCustomizer() {
     const img = $("#snap-ebt-card");
     if (!img) return;
+    const carousel = img.closest?.(".snap-card-carousel") || img.parentElement;
+    if (!carousel) return;
     const prevImg = document.querySelector("[data-snap-ebt-prev]");
     const nextImg = document.querySelector("[data-snap-ebt-next]");
 
@@ -214,59 +216,75 @@
       applyAll();
     }
 
-    // Swipe/drag on the large preview image (touch + desktop drag).
+    // Swipe/drag to switch card themes (touch + desktop drag).
+    const isCoarsePointer =
+      (typeof window.matchMedia === "function" && window.matchMedia("(pointer: coarse)").matches) ||
+      (typeof navigator !== "undefined" && navigator.maxTouchPoints > 0);
+
     let swipeStartX = 0;
     let swipeStartY = 0;
     let swiping = false;
-    const SWIPE_MIN_PX = 34;
+    // Touch devices often register smaller finger movement; keep it forgiving.
+    const SWIPE_MIN_PX = isCoarsePointer ? 22 : 34;
     let activePointerId = null;
     let lastDx = 0;
 
     // Prevent native browser "drag image" behavior from stealing the gesture.
-    img.setAttribute("draggable", "false");
-    img.addEventListener("dragstart", (e) => e.preventDefault());
+    for (const el of [img, prevImg, nextImg]) {
+      if (!el) continue;
+      el.setAttribute("draggable", "false");
+      el.addEventListener("dragstart", (e) => e.preventDefault());
+    }
 
-    img.addEventListener("pointerdown", (e) => {
-      if (e.pointerType === "mouse" && e.buttons !== 1) return;
-      e.preventDefault();
+    carousel.addEventListener("pointerdown", (e) => {
+      // Some older browsers may not implement `isPrimary`; only filter when it's explicitly false.
+      if (e.isPrimary === false) return;
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+
       swiping = true;
       activePointerId = e.pointerId;
       swipeStartX = e.clientX;
       swipeStartY = e.clientY;
       lastDx = 0;
       try {
-        img.setPointerCapture(activePointerId);
+        carousel.setPointerCapture(activePointerId);
       } catch {
         // ignore
       }
     });
-    img.addEventListener("pointermove", (e) => {
+    carousel.addEventListener("pointermove", (e) => {
       if (!swiping || activePointerId !== e.pointerId) return;
-      e.preventDefault();
       const dx = e.clientX - swipeStartX;
       const dy = e.clientY - swipeStartY;
       // Only drag when gesture is primarily horizontal.
       if (Math.abs(dx) < Math.abs(dy) && Math.abs(dy) > 8) return;
+      // Prevent page/modal scroll once we're sure it's a horizontal swipe.
+      e.preventDefault();
       lastDx = dx;
       const clamped = Math.max(-140, Math.min(140, dx));
       const rot = (clamped / 140) * 6;
       document.documentElement.style.setProperty("--snap-card-drag-x", `${clamped}px`);
       document.documentElement.style.setProperty("--snap-card-rot", `${rot}deg`);
     });
-    img.addEventListener("pointerup", (e) => {
+    carousel.addEventListener("pointerup", (e) => {
       if (!swiping || activePointerId !== e.pointerId) return;
-      e.preventDefault();
       swiping = false;
       activePointerId = null;
       const dx = e.clientX - swipeStartX;
       const dy = e.clientY - swipeStartY;
       document.documentElement.style.setProperty("--snap-card-drag-x", `0px`);
       document.documentElement.style.setProperty("--snap-card-rot", `0deg`);
-      if (Math.abs(dx) < SWIPE_MIN_PX || Math.abs(dx) < Math.abs(dy)) return;
+
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+      if (absDx < SWIPE_MIN_PX) return;
+      // Allow slightly diagonal swipes to still count as "horizontal".
+      if (absDy > absDx * 0.85) return;
+
       // Swipe left → next, swipe right → prev
       step(dx < 0 ? 1 : -1);
     });
-    img.addEventListener("pointercancel", () => {
+    carousel.addEventListener("pointercancel", () => {
       swiping = false;
       activePointerId = null;
       document.documentElement.style.setProperty("--snap-card-drag-x", `0px`);
