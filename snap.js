@@ -225,9 +225,18 @@
     let swipeStartY = 0;
     let swiping = false;
     // Touch devices often register smaller finger movement; keep it forgiving.
-    const SWIPE_MIN_PX = isCoarsePointer ? 22 : 34;
+    const SWIPE_MIN_PX = isCoarsePointer ? 18 : 34;
+    const SWIPE_MIN_PX_TOUCH = isCoarsePointer ? 12 : 20;
     let activePointerId = null;
     let lastDx = 0;
+    let ignorePointerDuringTouch = false;
+
+    // Touch fallback (some mobile browsers are inconsistent with pointer events inside <dialog>).
+    let touchSwiping = false;
+    let touchId = null;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchMoved = false;
 
     // Prevent native browser "drag image" behavior from stealing the gesture.
     for (const el of [img, prevImg, nextImg]) {
@@ -237,6 +246,7 @@
     }
 
     carousel.addEventListener("pointerdown", (e) => {
+      if (ignorePointerDuringTouch || touchSwiping) return;
       // Some older browsers may not implement `isPrimary`; only filter when it's explicitly false.
       if (e.isPrimary === false) return;
       if (e.pointerType === "mouse" && e.button !== 0) return;
@@ -253,6 +263,7 @@
       }
     });
     carousel.addEventListener("pointermove", (e) => {
+      if (ignorePointerDuringTouch || touchSwiping) return;
       if (!swiping || activePointerId !== e.pointerId) return;
       const dx = e.clientX - swipeStartX;
       const dy = e.clientY - swipeStartY;
@@ -267,6 +278,7 @@
       document.documentElement.style.setProperty("--snap-card-rot", `${rot}deg`);
     });
     carousel.addEventListener("pointerup", (e) => {
+      if (ignorePointerDuringTouch || touchSwiping) return;
       if (!swiping || activePointerId !== e.pointerId) return;
       swiping = false;
       activePointerId = null;
@@ -278,18 +290,107 @@
       const absDx = Math.abs(dx);
       const absDy = Math.abs(dy);
       if (absDx < SWIPE_MIN_PX) return;
-      // Allow slightly diagonal swipes to still count as "horizontal".
-      if (absDy > absDx * 0.85) return;
+      // Allow diagonal swipes to still count as "horizontal".
+      if (absDy > absDx * 0.95) return;
 
       // Swipe left → next, swipe right → prev
       step(dx < 0 ? 1 : -1);
     });
     carousel.addEventListener("pointercancel", () => {
+      if (ignorePointerDuringTouch || touchSwiping) return;
       swiping = false;
       activePointerId = null;
       document.documentElement.style.setProperty("--snap-card-drag-x", `0px`);
       document.documentElement.style.setProperty("--snap-card-rot", `0deg`);
     });
+
+    function resetTouchSwipe() {
+      touchSwiping = false;
+      touchId = null;
+      touchMoved = false;
+      ignorePointerDuringTouch = false;
+      document.documentElement.style.setProperty("--snap-card-drag-x", `0px`);
+      document.documentElement.style.setProperty("--snap-card-rot", `0deg`);
+    }
+
+    carousel.addEventListener(
+      "touchstart",
+      (e) => {
+        // Only single-finger swipe on the carousel.
+        if (e.touches.length !== 1) return;
+        const t = e.touches[0];
+        touchSwiping = true;
+        ignorePointerDuringTouch = true;
+        touchId = t.identifier;
+        touchStartX = t.clientX;
+        touchStartY = t.clientY;
+        touchMoved = false;
+      },
+      { passive: false },
+    );
+
+    carousel.addEventListener(
+      "touchmove",
+      (e) => {
+        if (!touchSwiping) return;
+        if (e.touches.length !== 1) return;
+        const t = e.touches[0];
+        if (touchId !== t.identifier) return;
+
+        const dx = t.clientX - touchStartX;
+        const dy = t.clientY - touchStartY;
+        const absDx = Math.abs(dx);
+        const absDy = Math.abs(dy);
+
+        // Start preventing page/modal movement only once it's clearly a horizontal swipe.
+        if (absDx < 5) return;
+        // If it's mostly horizontal (allow some jitter), lock it in as a swipe.
+        if (absDy > absDx * 0.85) return;
+
+        // At this point, lock it in as a swipe gesture.
+        e.preventDefault();
+        touchMoved = true;
+        // Keep the drag preview subtle on touch so the dialog doesn't feel like it "moves".
+        const clamped = Math.max(-90, Math.min(90, dx));
+        const rot = (clamped / 90) * 6;
+        document.documentElement.style.setProperty("--snap-card-drag-x", `${clamped}px`);
+        document.documentElement.style.setProperty("--snap-card-rot", `${rot}deg`);
+      },
+      { passive: false },
+    );
+
+    carousel.addEventListener(
+      "touchend",
+      (e) => {
+        if (!touchSwiping) return;
+        if (!e.changedTouches || e.changedTouches.length < 1) return;
+        const t = e.changedTouches[0];
+        if (touchId !== t.identifier) return;
+
+        const dx = t.clientX - touchStartX;
+        const dy = t.clientY - touchStartY;
+
+        document.documentElement.style.setProperty("--snap-card-drag-x", `0px`);
+        document.documentElement.style.setProperty("--snap-card-rot", `0deg`);
+
+        const absDx = Math.abs(dx);
+        const absDy = Math.abs(dy);
+        // Consider it a swipe if horizontal distance is strong enough.
+        const shouldStep = absDx >= SWIPE_MIN_PX_TOUCH && absDy <= absDx * 1.1;
+        if (shouldStep) step(dx < 0 ? 1 : -1);
+        resetTouchSwipe();
+      },
+      { passive: false },
+    );
+
+    carousel.addEventListener(
+      "touchcancel",
+      () => {
+        if (!touchSwiping) return;
+        resetTouchSwipe();
+      },
+      { passive: false },
+    );
 
     if (confirmBtn) {
       confirmBtn.addEventListener("click", () => {

@@ -2186,7 +2186,10 @@ dialog[data-modal-root="snap-edit-card"] .snap-ebt-img--active:active {
 
 /* Make swipe gestures start anywhere in the carousel on mobile. */
 dialog[data-modal-root="snap-edit-card"] .snap-card-carousel {
-  touch-action: pan-y;
+  /* Swipe is handled in JS; disable browser panning so the dialog doesn't shift. */
+  touch-action: none;
+  /* Extra safety for browsers that interpret gestures differently. */
+  overscroll-behavior-x: contain;
 }
 
 /* Side previews are decorative (aria-hidden); let touches hit the carousel. */
